@@ -1,5 +1,5 @@
-var hw = require('../nav/nav.js');
+var canvas = require('../canvas.js');
 
-hw();
+canvas();
 
-console.log('testing testing');
+// console.log('testing testing');

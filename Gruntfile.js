@@ -69,7 +69,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', [
     // 'jshint',
     'browserify',
-    'mochaTest',
+    // 'mochaTest',
   ]);
 
   // grunt.registerTask('watch', ['watch']);
