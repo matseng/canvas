@@ -1,0 +1,22 @@
+{
+  "name": "canvas",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/matseng/canvas.git"
+  },
+  "author": "Michael Tseng",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/matseng/canvas/issues"
+  },
+  "homepage": "https://github.com/matseng/canvas",
+  "devDependencies": {
+    "browserify": "^6.2.0"
+  }
+}
