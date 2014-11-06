@@ -117,12 +117,12 @@ CanvasDemo.prototype.draw = function() {
 };
 
 CanvasDemo.prototype.getShapeinBounds = function(point) {
-  // point.x = point.x + this.translateX;
-  // point.y = point.y + this.translateY;
+  var pointX = point.x - this.translateX;
+  var pointY = point.y - this.translateY;
   var shape = this.rect;
   for(var i = 0; i < this.shapes.length; i++) {
     shape = this.shapes[i];
-    if ( (shape.x <= point.x) && (point.x <= shape.x + shape.width) && (shape.y <= point.y) && (point.y <= shape.y + shape.height) ){
+    if ( (shape.x <= pointX) && (pointX <= shape.x + shape.width) && (shape.y <= pointY) && (pointY <= shape.y + shape.height) ){
       return shape;
     }
   }
