@@ -11,13 +11,15 @@ var Rect = function(x, y, width, height) {
   this.height = height;
 }
 
-Rect.prototype.getDims = function() {
+Rect.prototype.getDimensions = function() {
   return [this.x, this.y, this.width, this.height];
 };
 
 var CanvasDemo = function() {
   this.canvas = document.getElementById('canvas');
   this.shapes = [];
+  this.translateX = 0;
+  this.translateY = 0;
 
   if ( this.canvas.getContext ) {
     this.shapes.push( new Rect(25,25,100,100) );
@@ -32,7 +34,8 @@ var CanvasDemo = function() {
 
 var mousePointInitial = {};
 var shapePointInitial = {};
-var mousemoveBound;
+var translateInitial = {};
+var dragBound;
 var mouseupBound;
 var _resetBound;
 
@@ -43,59 +46,79 @@ CanvasDemo.prototype.addEventListeners = function() {
 CanvasDemo.prototype.mousedown = function(event) {
   var point = this.canvas.relMouseCoords(event);
   var shape = this.getShapeinBounds(point);
+  mousePointInitial = point;
+  mouseupBound = this.mouseup.bind(this);
   if ( shape ) {
-    mousePointInitial = point;
     shapePointInitial = {x: shape.x, y: shape.y};
-    mousemoveBound = this.mousemove.bind(this, shape);
-    mouseupBound = this.mouseup.bind(this);
-    _resetBound = _reset.bind(this, mousemoveBound, mouseupBound);
-    this.canvas.addEventListener('mousemove', mousemoveBound);
-    this.canvas.addEventListener('mouseup', mouseupBound);
+    dragBound = this.drag.bind(this, shape);
+    _resetBound = _reset.bind(this, dragBound, mouseupBound);
+    this.canvas.addEventListener('mousemove', dragBound);
   } else {
-    _resetBound.call(this);
+    translateInitial = {x: this.translateX, y: this.translateY};
+    translateBound = this.translate.bind(this);
+    _resetBound = _reset.bind(this, translateBound, mouseupBound);
+    this.canvas.addEventListener('mousemove', translateBound);
   }
+  this.canvas.addEventListener('mouseup', mouseupBound);
 };
 
-CanvasDemo.prototype.mousemove = function(shape, event) {
+CanvasDemo.prototype.drag = function(shape, event) {
+  
   if (event.which === 1 && mousePointInitial) {
-    this.ctx.clearRect.apply(this.ctx, shape.getDims());
     var mousePoint = this.canvas.relMouseCoords(event);
     var deltaX = mousePoint.x - mousePointInitial.x;
     var deltaY = mousePoint.y - mousePointInitial.y;
     shape.x = shapePointInitial.x + deltaX;
     shape.y = shapePointInitial.y + deltaY;
-    this.ctx.fillRect.apply(this.ctx, shape.getDims());
+    this.draw();
   } else {
     if (_resetBound) {
-      debugger     
       _resetBound();
     }
   }
 }
 
+CanvasDemo.prototype.translate = function(event) {
+  if (event.which === 1 && mousePointInitial) {
+    var mousePoint = this.canvas.relMouseCoords(event);
+    this.translateX = translateInitial.x + mousePoint.x - mousePointInitial.x;
+    this.translateY = translateInitial.y + mousePoint.y - mousePointInitial.y;
+    this.draw();
+  } else {
+    if (_resetBound) {
+      _resetBound();
+    }
+  }
+};
+
 CanvasDemo.prototype.mouseup = function(event) {
   _resetBound();
 }
 
-function _reset(mousemoveBound, mouseupBound) {
+function _reset(dragBound, mouseupBound) {
   mousePointInitial = null;
   shapePointInitial = null;
-  this.canvas.removeEventListener('mousemove', mousemoveBound);
+  translateInitial = null;
+  this.canvas.removeEventListener('mousemove', dragBound);
   this.canvas.removeEventListener('mouseup', mouseupBound);
 };
 
 
 CanvasDemo.prototype.draw = function() {
+  this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
+  this.ctx.translate(this.translateX, this.translateY);
   for(var i = 0; i < this.shapes.length; i++) {
     var shape = this.shapes[i];
     this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
-    this.ctx.fillRect.apply(this.ctx, shape.getDims());
-    this.ctx.clearRect(50,50,50,50);
-    this.ctx.strokeRect(45,45,60,60);
+    this.ctx.fillRect.apply(this.ctx, shape.getDimensions());
+    // this.ctx.strokeRect(45,45,60,60);
   }
+  this.ctx.translate(-this.translateX, -this.translateY);
 };
 
 CanvasDemo.prototype.getShapeinBounds = function(point) {
+  // point.x = point.x + this.translateX;
+  // point.y = point.y + this.translateY;
   var shape = this.rect;
   for(var i = 0; i < this.shapes.length; i++) {
     shape = this.shapes[i];
