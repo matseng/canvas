@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mocha Spec Runner</title>
+    <link rel="stylesheet" href="../../../node_modules/mocha/mocha.css">
+</head>
+<body>
+    <div id="mocha"></div>
+    <script src="../../../node_modules/mocha/mocha.js"></script>
+    <script>mocha.setup('bdd')</script>
+    <script src="../../../node_modules/chai/chai.js"></script>
+    <script>
+        var assert = chai.assert;
+        var expect = chai.expect;
+        var should = chai.should();
+    </script>
+
+    <!-- include spec files here... -->
+    <script src="dist/testsBundle.js">
+      console.log("Watch and bundle tests: $watchify src/nav/tests/spec/moduleSpec.js -o src/nav/tests/dist/testsBundle.js");
+    </script>
+
+    <script>mocha.run()</script>
+</body>
+</html>
