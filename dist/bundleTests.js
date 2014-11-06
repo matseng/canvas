@@ -25,6 +25,7 @@ function CanvasDemo() {
   this.shapes = [];
   this.translateX = 0;
   this.translateY = 0;
+  this.scale = 1;
 
   if ( this.canvas.getContext ) {
     this.shapes.push( new Rect(25,25,100,100) );
@@ -46,6 +47,21 @@ var _resetBound;
 
 CanvasDemo.prototype.addEventListeners = function() {
   this.canvas.addEventListener('mousedown', this.mousedown.bind(this));
+  this.canvas.addEventListener('mousewheel', this.mousewheel.bind(this));
+};
+
+CanvasDemo.prototype.mousewheel = function(event) {
+  console.log("hello world: ");
+  var point = this.canvas.relMouseCoords(event);
+  var scalePrev = this.scale;
+
+  if (event.wheelDeltaY < 0) {
+    this.scale = this.scale * 1.05;
+  } else {
+    this.scale = this.scale * 0.95;
+  }
+  console.log(this.scale);
+  // this.draw();
 };
 
 CanvasDemo.prototype.mousedown = function(event) {
