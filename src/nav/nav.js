@@ -6,3 +6,11 @@ function hw() {
   console.log(test);
   return test;
 };
+
+
+
+function zoomStart() {};
+
+function zoom() {};
+
+function zoomEnd() {};

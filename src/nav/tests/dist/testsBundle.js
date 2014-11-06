@@ -8,6 +8,13 @@ function hw() {
   return test;
 };
 
+
+
+function zoomStart() {};
+
+function zoom() {};
+
+function zoomEnd() {};
 },{}],"/Users/mtseng/Vindico/matsengGithub/canvas/src/nav/tests/spec/moduleSpec.js":[function(require,module,exports){
 var hw = require('../../nav.js')
 

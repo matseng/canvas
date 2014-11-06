@@ -2,6 +2,7 @@ window.onload = run;
 
 function run() {
  var cd = new CanvasDemo();
+ module.exports = cd;
 };
 
 var Rect = function(x, y, width, height) {
