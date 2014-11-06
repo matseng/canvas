@@ -10,7 +10,9 @@ console.log('testing testing');
 module.exports = hw;
 
 function hw() {
-  console.log('hello world');
+  var test = 'hello world watch'
+  console.log(test);
+  return test;
 };
 
 },{}]},{},[1]);
