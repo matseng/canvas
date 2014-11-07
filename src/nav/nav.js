@@ -1,3 +1,5 @@
+var Hammer = require('hammerjs');
+
 
 module.exports = CanvasDemo;
 
@@ -54,6 +56,15 @@ var _resetBound;
 CanvasDemo.prototype.addEventListeners = function() {
   this.canvas.addEventListener('mousedown', this.mousedown.bind(this));
   this.canvas.addEventListener('mousewheel', this.mousewheel.bind(this));
+  this.addHammerEventListeners();
+};
+
+CanvasDemo.prototype.addHammerEventListeners = function() {
+  var hammer = new Hammer(this.canvas);
+  hammer.on('pan', function(event) {
+    console.log("hello world: hammertime");
+    event.preventDefault();
+  })
 };
 
 CanvasDemo.prototype.mousewheel = function(event) {
