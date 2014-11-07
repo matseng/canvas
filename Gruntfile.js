@@ -23,11 +23,13 @@ module.exports = function(grunt) {
     },
 
     browserify: {
-      standalone: {
+      js: {
         src: [ 'src/main/*.js' ],
         dest: './dist/bundle.js',
         options: {
-          standalone: '<%= pkg.name %>'
+          browserifyOptions: {
+            debug: true
+          }
         }
       },
 
@@ -68,7 +70,7 @@ module.exports = function(grunt) {
   // define tasks
   grunt.registerTask('default', [
     // 'jshint',
-    'browserify',
+    'browserify:js',
     // 'mochaTest',
   ]);
 

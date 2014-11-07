@@ -14,8 +14,15 @@ var Rect = function(x, y, width, height) {
   this.height = height;
 }
 
-Rect.prototype.getDimensions = function() {
-  return [this.x, this.y, this.width, this.height];
+Rect.prototype.getDimensions = function(scale) {
+  var x, y, width, height;
+  x = this.x * scale;
+  y = this.y * scale;
+  width = this.width * scale;
+  height = this.height * scale;
+  // return [this.x, this.y, this.width, this.height];
+  console.log(x,y,scale);
+  return [x, y, width, height];
 };
 
 // var CanvasDemo = function() {
@@ -60,7 +67,7 @@ CanvasDemo.prototype.mousewheel = function(event) {
     this.scale = this.scale * 0.95;
   }
   console.log(this.scale);
-  // this.draw();
+  this.draw();
 };
 
 CanvasDemo.prototype.mousedown = function(event) {
@@ -130,7 +137,7 @@ CanvasDemo.prototype.draw = function() {
   for(var i = 0; i < this.shapes.length; i++) {
     var shape = this.shapes[i];
     this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
-    this.ctx.fillRect.apply(this.ctx, shape.getDimensions());
+    this.ctx.fillRect.apply(this.ctx, shape.getDimensions(this.scale));
     // this.ctx.strokeRect(45,45,60,60);
   }
   this.ctx.translate(-this.translateX, -this.translateY);
