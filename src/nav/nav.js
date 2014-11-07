@@ -56,7 +56,7 @@ var _resetBound;
 
 CanvasDemo.prototype.addEventListeners = function() {
   // this.canvas.addEventListener('mousedown', this.mousedown.bind(this));
-  this.canvas.addEventListener('mousewheel', this.mousewheel.bind(this));
+  // this.canvas.addEventListener('mousewheel', this.mousewheel.bind(this));
   this.addHammerEventListeners();
 };
 
@@ -64,6 +64,9 @@ CanvasDemo.prototype.addHammerEventListeners = function() {
   this.hammer = new Hammer.Manager(this.canvas);
   this.hammer.add(new Hammer.Pan({threshold:0}));
   this.hammer.add(new Hammer.Press({time:0}));
+  this.hammer.add(new Hammer.Pinch());
+
+  this.hammer.on('pinch', this.setScale.bind(this));
   this.hammer.on('press', this.mousedown.bind(this));
   // hammer.on('pan', function(event) {
     this.ctx.fillStyle = "blue";
@@ -72,7 +75,7 @@ CanvasDemo.prototype.addHammerEventListeners = function() {
   // }.bind(this));
 };
 
-CanvasDemo.prototype.mousewheel = function(event) {
+CanvasDemo.prototype.setScale = function(eventHammer) {
   var mouse = this.canvas.relMouseCoords(event);
   var scalePrev = this.scale;
 
