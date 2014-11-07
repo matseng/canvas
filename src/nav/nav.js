@@ -34,6 +34,7 @@ function CanvasDemo() {
   this.translateX = 0;
   this.translateY = 0;
   this.scale = 1;
+  this.hammer;
 
   if ( this.canvas.getContext ) {
     this.shapes.push( new Rect(25,25,100,100) );
@@ -54,22 +55,15 @@ var mouseupBound;
 var _resetBound;
 
 CanvasDemo.prototype.addEventListeners = function() {
-  this.canvas.addEventListener('mousedown', this.mousedown.bind(this));
+  // this.canvas.addEventListener('mousedown', this.mousedown.bind(this));
   this.canvas.addEventListener('mousewheel', this.mousewheel.bind(this));
   this.addHammerEventListeners();
 };
 
 CanvasDemo.prototype.addHammerEventListeners = function() {
-  var hammer = new Hammer(this.canvas);
-  hammer.on('pan', function(event) {
-    console.log("hello world: hammertime 2");
-    // event.preventDefault();
-    // console.log(event.srcEvent.type);
-    // event.srcEvent.stopPropagation();
-    this.ctx.fillStyle = "blue";
-    this.ctx.font = "bold 16px Arial";
-    this.ctx.fillText("changed css iNoBounce", 100, 100);
-  }.bind(this));
+  this.hammer = new Hammer.Manager(this.canvas);
+  this.hammer.add(new Hammer.Pan({threshold:0}));
+  this.hammer.on('panstart', this.mousedown.bind(this));
 };
 
 CanvasDemo.prototype.mousewheel = function(event) {
@@ -94,6 +88,7 @@ CanvasDemo.prototype.mousewheel = function(event) {
 };
 
 CanvasDemo.prototype.mousedown = function(event) {
+  event = event.srcEvent;
   var mouse = this.canvas.relMouseCoords(event);
   mousePointInitial = mouse;
 
@@ -109,18 +104,21 @@ CanvasDemo.prototype.mousedown = function(event) {
     shapePointInitial = {x: shape.x, y: shape.y};
     dragBound = this.drag.bind(this, shape);
     _resetBound = _reset.bind(this, dragBound, mouseupBound);
-    this.canvas.addEventListener('mousemove', dragBound);
+    // this.canvas.addEventListener('mousemove', dragBound);
+    this.hammer.on('panmove', dragBound);
+
   } else {
     translateInitial = {x: this.translateX, y: this.translateY};
     translateBound = this.translate.bind(this);
     _resetBound = _reset.bind(this, translateBound, mouseupBound);
-    this.canvas.addEventListener('mousemove', translateBound);
+    // this.canvas.addEventListener('mousemove', translateBound);  //TODO change to hammer
   }
-  this.canvas.addEventListener('mouseup', mouseupBound);
+  // this.canvas.addEventListener('mouseup', mouseupBound);
+  this.hammer.on('panend', mouseupBound);
 };
 
 CanvasDemo.prototype.drag = function(shape, event) {
-  
+  event = event.srcEvent;
   if (event.which === 1 && mousePointInitial) {
     var mousePoint = this.canvas.relMouseCoords(event);
     var deltaX = (mousePoint.x - mousePointInitial.x) / this.scale;
@@ -136,6 +134,7 @@ CanvasDemo.prototype.drag = function(shape, event) {
 }
 
 CanvasDemo.prototype.translate = function(event) {
+  event = event.srcEvent;
   if (event.which === 1 && mousePointInitial) {
     var mousePoint = this.canvas.relMouseCoords(event);
     this.translateX = translateInitial.x + (mousePoint.x - mousePointInitial.x) / this.scale;
@@ -148,7 +147,7 @@ CanvasDemo.prototype.translate = function(event) {
   }
 };
 
-CanvasDemo.prototype.mouseup = function(event) {
+CanvasDemo.prototype.mouseup = function() {
   _resetBound();
 }
 
@@ -156,8 +155,10 @@ function _reset(dragBound, mouseupBound) {
   mousePointInitial = null;
   shapePointInitial = null;
   translateInitial = null;
-  this.canvas.removeEventListener('mousemove', dragBound);
-  this.canvas.removeEventListener('mouseup', mouseupBound);
+  // this.canvas.removeEventListener('mousemove', dragBound);
+  // this.canvas.removeEventListener('mouseup', mouseupBound);
+  this.hammer.off('panmove', dragBound);
+  this.hammer.off('panend', mouseupBound);
 };
 
 
