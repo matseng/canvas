@@ -21,7 +21,7 @@ Rect.prototype.getDimensions = function(scale) {
   width = this.width * scale;
   height = this.height * scale;
   // return [this.x, this.y, this.width, this.height];
-  console.log(x,y,scale);
+  // console.log(x,y,scale);
   return [x, y, width, height];
 };
 
@@ -58,7 +58,7 @@ CanvasDemo.prototype.addEventListeners = function() {
 
 CanvasDemo.prototype.mousewheel = function(event) {
   console.log("hello world: ");
-  var point = this.canvas.relMouseCoords(event);
+  var mouse = this.canvas.relMouseCoords(event);
   var scalePrev = this.scale;
 
   if (event.wheelDeltaY < 0) {
@@ -66,6 +66,16 @@ CanvasDemo.prototype.mousewheel = function(event) {
   } else {
     this.scale = this.scale * 0.95;
   }
+
+  this.translateX = this.translateX - _getTranslateDelta(mouse.x, scalePrev, this.scale);
+  this.translateY = this.translateY - _getTranslateDelta(mouse.y, scalePrev, this.scale);
+
+  function _getTranslateDelta(x, scalePrev, scaleNew) {
+    var translateDelta = (x / scalePrev * scaleNew - x) / scaleNew;
+    console.log('translateDelta: ', translateDelta);
+    return translateDelta;
+  }
+
   console.log(this.scale);
   this.draw();
 };
@@ -133,14 +143,14 @@ function _reset(dragBound, mouseupBound) {
 
 CanvasDemo.prototype.draw = function() {
   this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
-  this.ctx.translate(this.translateX, this.translateY);
+  this.ctx.translate(this.translateX * this.scale, this.translateY * this.scale);
   for(var i = 0; i < this.shapes.length; i++) {
     var shape = this.shapes[i];
     this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
     this.ctx.fillRect.apply(this.ctx, shape.getDimensions(this.scale));
     // this.ctx.strokeRect(45,45,60,60);
   }
-  this.ctx.translate(-this.translateX, -this.translateY);
+  this.ctx.translate(-this.translateX * this.scale, -this.translateY * this.scale);
 };
 
 CanvasDemo.prototype.getShapeinBounds = function(point) {
