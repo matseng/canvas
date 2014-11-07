@@ -118,8 +118,8 @@ CanvasDemo.prototype.drag = function(shape, event) {
 CanvasDemo.prototype.translate = function(event) {
   if (event.which === 1 && mousePointInitial) {
     var mousePoint = this.canvas.relMouseCoords(event);
-    this.translateX = translateInitial.x + mousePoint.x - mousePointInitial.x;
-    this.translateY = translateInitial.y + mousePoint.y - mousePointInitial.y;
+    this.translateX = translateInitial.x + (mousePoint.x - mousePointInitial.x) / this.scale;
+    this.translateY = translateInitial.y + (mousePoint.y - mousePointInitial.y) / this.scale;
     this.draw();
   } else {
     if (_resetBound) {
