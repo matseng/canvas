@@ -74,19 +74,20 @@ CanvasDemo.prototype.mousewheel = function(event) {
     return translateDelta;
   }
 
-  console.log(this.scale);
   this.draw();
 };
 
 CanvasDemo.prototype.mousedown = function(event) {
   var mouse = this.canvas.relMouseCoords(event);
+  mousePointInitial = mouse;
+
   var point = {};
   point.x = mouse.x / this.scale - this.translateX;
   point.y = mouse.y / this.scale - this.translateY;
-
   var shape = this.getShapeinBounds(point);
-  mousePointInitial = point;
+  
   mouseupBound = this.mouseup.bind(this);
+  
   console.log(shape);
   if ( shape ) {
     shapePointInitial = {x: shape.x, y: shape.y};
@@ -106,8 +107,8 @@ CanvasDemo.prototype.drag = function(shape, event) {
   
   if (event.which === 1 && mousePointInitial) {
     var mousePoint = this.canvas.relMouseCoords(event);
-    var deltaX = mousePoint.x - mousePointInitial.x;
-    var deltaY = mousePoint.y - mousePointInitial.y;
+    var deltaX = (mousePoint.x - mousePointInitial.x) / this.scale;
+    var deltaY = (mousePoint.y - mousePointInitial.y) / this.scale;
     shape.x = shapePointInitial.x + deltaX;
     shape.y = shapePointInitial.y + deltaY;
     this.draw();
