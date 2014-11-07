@@ -63,12 +63,12 @@ CanvasDemo.prototype.addHammerEventListeners = function() {
   var hammer = new Hammer(this.canvas);
   hammer.on('pan', function(event) {
     console.log("hello world: hammertime 2");
-    event.preventDefault();
-    console.log(event.srcEvent.type);
-    event.srcEvent.stopPropagation();
+    // event.preventDefault();
+    // console.log(event.srcEvent.type);
+    // event.srcEvent.stopPropagation();
     this.ctx.fillStyle = "blue";
     this.ctx.font = "bold 16px Arial";
-    this.ctx.fillText("changed css", 100, 100);
+    this.ctx.fillText("changed css iNoBounce", 100, 100);
   }.bind(this));
 };
 

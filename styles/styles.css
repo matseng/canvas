@@ -19,5 +19,7 @@ body {
 
 
 #canvas {
-  border: 1px black solid;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 0px black solid;
 }
