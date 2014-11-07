@@ -63,7 +63,7 @@ CanvasDemo.prototype.addHammerEventListeners = function() {
   var hammer = new Hammer(this.canvas);
   hammer.on('pan', function(event) {
     console.log("hello world: hammertime 2");
-    // event.preventDefault();
+    event.preventDefault();
     console.log(event.srcEvent.type);
     event.srcEvent.stopPropagation();
     this.ctx.fillStyle = "blue";
