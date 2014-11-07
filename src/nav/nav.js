@@ -79,7 +79,7 @@ CanvasDemo.prototype.setScale = function(eventHammer) {
   var mouse = this.canvas.relMouseCoords(event);
   var scalePrev = this.scale;
 
-  if (event.wheelDeltaY < 0) {
+  if (eventHammer.scale > 1) {
     this.scale = this.scale * 1.05;
   } else {
     this.scale = this.scale * 0.95;
