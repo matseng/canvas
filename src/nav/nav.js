@@ -121,6 +121,8 @@ CanvasDemo.prototype.mousedown = function(eventHammer) {
     translateBound = this.translate.bind(this);
     _resetBound = _reset.bind(this, translateBound, mouseupBound);
     // this.canvas.addEventListener('mousemove', translateBound);  //TODO change to hammer
+    this.hammer.on('panmove', translateBound);
+
   }
   // this.canvas.addEventListener('mouseup', mouseupBound);
   this.hammer.on('panend', mouseupBound);
@@ -145,7 +147,8 @@ CanvasDemo.prototype.drag = function(shape, event) {
 
 CanvasDemo.prototype.translate = function(event) {
   event = event.srcEvent;
-  if (event.which === 1 && mousePointInitial) {
+  // if (event.which === 1 && mousePointInitial) {
+  if (mousePointInitial) {
     var mousePoint = this.canvas.relMouseCoords(event);
     this.translateX = translateInitial.x + (mousePoint.x - mousePointInitial.x) / this.scale;
     this.translateY = translateInitial.y + (mousePoint.y - mousePointInitial.y) / this.scale;
