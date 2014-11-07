@@ -21,8 +21,11 @@ module.exports = function() {
     }
     while (currentElement = currentElement.offsetParent)
 
-    canvasX = event.pageX - totalOffsetX;
-    canvasY = event.pageY - totalOffsetY;
+    var pageX = event.pageX ? event.pageX : event.changedTouches[0].pageX;
+    var pageY = event.pageY ? event.pageY : event.changedTouches[0].pageY;
+
+    canvasX = pageX - totalOffsetX;
+    canvasY = pageY - totalOffsetY;
 
     // Fix for variable canvas width
     canvasX = Math.round( canvasX * (this.width / this.offsetWidth) );

@@ -63,7 +63,13 @@ CanvasDemo.prototype.addEventListeners = function() {
 CanvasDemo.prototype.addHammerEventListeners = function() {
   this.hammer = new Hammer.Manager(this.canvas);
   this.hammer.add(new Hammer.Pan({threshold:0}));
-  this.hammer.on('panstart', this.mousedown.bind(this));
+  this.hammer.add(new Hammer.Press({time:0}));
+  this.hammer.on('press', this.mousedown.bind(this));
+  // hammer.on('pan', function(event) {
+    this.ctx.fillStyle = "blue";
+    this.ctx.font = "bold 16px Arial";
+    this.ctx.fillText("changed hammer", 100, 100);
+  // }.bind(this));
 };
 
 CanvasDemo.prototype.mousewheel = function(event) {
@@ -87,11 +93,11 @@ CanvasDemo.prototype.mousewheel = function(event) {
   this.draw();
 };
 
-CanvasDemo.prototype.mousedown = function(event) {
-  event = event.srcEvent;
+CanvasDemo.prototype.mousedown = function(eventHammer) {
+  event = eventHammer.srcEvent;
   var mouse = this.canvas.relMouseCoords(event);
   mousePointInitial = mouse;
-
+  console.log(mouse);
   var point = {};
   point.x = mouse.x / this.scale - this.translateX;
   point.y = mouse.y / this.scale - this.translateY;
@@ -119,7 +125,8 @@ CanvasDemo.prototype.mousedown = function(event) {
 
 CanvasDemo.prototype.drag = function(shape, event) {
   event = event.srcEvent;
-  if (event.which === 1 && mousePointInitial) {
+  // if (event.which === 1 && mousePointInitial) {
+  if (mousePointInitial) {
     var mousePoint = this.canvas.relMouseCoords(event);
     var deltaX = (mousePoint.x - mousePointInitial.x) / this.scale;
     var deltaY = (mousePoint.y - mousePointInitial.y) / this.scale;
