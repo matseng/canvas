@@ -21,8 +21,8 @@ module.exports = function() {
     }
     while (currentElement = currentElement.offsetParent)
 
-    var pageX = event.pageX ? event.pageX : event.changedTouches[0].pageX;
-    var pageY = event.pageY ? event.pageY : event.changedTouches[0].pageY;
+    var pageX = event.pageX ? event.pageX : event.changedTouches ? event.changedTouches[0].pageX : event.center.x;
+    var pageY = event.pageY ? event.pageY : event.changedTouches ? event.changedTouches[0].pageY : event.center.y;
 
     canvasX = pageX - totalOffsetX;
     canvasY = pageY - totalOffsetY;

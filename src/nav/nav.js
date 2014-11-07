@@ -76,7 +76,7 @@ CanvasDemo.prototype.addHammerEventListeners = function() {
 };
 
 CanvasDemo.prototype.setScale = function(eventHammer) {
-  var mouse = this.canvas.relMouseCoords(event);
+  var mouse = this.canvas.relMouseCoords(eventHammer);
   var scalePrev = this.scale;
 
   if (eventHammer.scale > 1) {
