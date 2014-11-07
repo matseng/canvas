@@ -66,7 +66,10 @@ CanvasDemo.prototype.addHammerEventListeners = function() {
     // event.preventDefault();
     console.log(event.srcEvent.type);
     event.srcEvent.stopPropagation();
-  })
+    this.ctx.fillStyle = "blue";
+    this.ctx.font = "bold 16px Arial";
+    this.ctx.fillText("stopProp", 100, 100);
+  }.bind(this));
 };
 
 CanvasDemo.prototype.mousewheel = function(event) {
