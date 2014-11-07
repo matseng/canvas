@@ -62,8 +62,10 @@ CanvasDemo.prototype.addEventListeners = function() {
 CanvasDemo.prototype.addHammerEventListeners = function() {
   var hammer = new Hammer(this.canvas);
   hammer.on('pan', function(event) {
-    console.log("hello world: hammertime");
-    event.preventDefault();
+    console.log("hello world: hammertime 2");
+    // event.preventDefault();
+    console.log(event.srcEvent.type);
+    event.srcEvent.stopPropagation();
   })
 };
 
