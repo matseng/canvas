@@ -68,7 +68,7 @@ CanvasDemo.prototype.addHammerEventListeners = function() {
     event.srcEvent.stopPropagation();
     this.ctx.fillStyle = "blue";
     this.ctx.font = "bold 16px Arial";
-    this.ctx.fillText("stopProp", 100, 100);
+    this.ctx.fillText("changed css", 100, 100);
   }.bind(this));
 };
 
