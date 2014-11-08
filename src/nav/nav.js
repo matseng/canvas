@@ -1,13 +1,7 @@
 var Hammer = require('hammerjs');
-
+var render = require('../render/render.js');  //lowercase render because it's a singleton
 
 module.exports = CanvasDemo;
-
-// function hw() {
-//   var test = 'hello world watch'
-//   console.log(test);
-//   return test;
-// };
 
 var Rect = function(x, y, width, height) {
   this.x = x;
@@ -30,22 +24,35 @@ Rect.prototype.getDimensions = function(scale) {
 // var CanvasDemo = function() {
 function CanvasDemo() {
   this.canvas = document.getElementById('canvas');
+  this.ctx;
   this.shapes = [];
-  this.translateX = 0;
-  this.translateY = 0;
-  this.scale = 1;
-  this.hammer;
+  
+  this.transform = {
+    translateX: 0,
+    translateY: 0,
+    scale: 1
+  };
 
-  if ( this.canvas.getContext ) {
-    this.shapes.push( new Rect(25,25,100,100) );
-    this.shapes.push( new Rect(125,125,200,200) );
-    this.ctx = canvas.getContext('2d');
-    this.resizeCanvas();
-    window.onresize = this.resizeCanvas.bind(this);
-    this.addEventListeners();
-    this.draw();
-  }
+  this.hammer;
+  this.init();
+  this.run();
 }
+
+CanvasDemo.prototype.init = function() {
+  // this.ctx = canvas.getContext('2d');
+};
+
+CanvasDemo.prototype.run = function() {
+  this.shapes.push( new Rect(25,25,100,100) );
+  this.shapes.push( new Rect(125,125,200,200) );
+  render.init(this.canvas, this.shapes, this.transform);
+  this.resizeCanvas();
+  window.onresize = this.resizeCanvas.bind(this);
+  this.addEventListeners();
+  render.draw();
+  // render.draw();
+}
+
 
 var mousePointInitial = {};
 var shapePointInitial = {};
@@ -69,39 +76,39 @@ CanvasDemo.prototype.addHammerEventListeners = function() {
   this.hammer.on('pinch', this.setScale.bind(this));
   this.hammer.on('press', this.mousedown.bind(this));
   // hammer.on('pan', function(event) {
-    this.ctx.fillStyle = "blue";
-    this.ctx.font = "bold 16px Arial";
-    this.ctx.fillText("changed hammer", 100, 100);
+    // this.ctx.fillStyle = "blue";
+    // this.ctx.font = "bold 16px Arial";
+    // this.ctx.fillText("changed hammer", 100, 100);
   // }.bind(this));
 };
 
 CanvasDemo.prototype.setScale = function(eventHammer) {
   var mouse = this.canvas.relMouseCoords(eventHammer);
-  var scalePrev = this.scale;
+  var scalePrev = this.transform.scale;
 
   if(eventHammer.type === 'mousewheel') {
     if (eventHammer.wheelDeltaY < 0) {
-      this.scale = this.scale * 1.05;
+      this.transform.scale = this.transform.scale * 1.05;
     } else {
-      this.scale = this.scale * 0.95;
+      this.transform.scale = this.transform.scale * 0.95;
     }
   } else if (eventHammer.type === 'pinch') {
     if (eventHammer.scale > 1) {
-      this.scale = this.scale * 1.025;
+      this.transform.scale = this.transform.scale * 1.025;
     } else {
-      this.scale = this.scale * 0.975;
+      this.transform.scale = this.transform.scale * 0.975;
     }
   }
 
-  this.translateX = this.translateX - _getTranslateDelta(mouse.x, scalePrev, this.scale);
-  this.translateY = this.translateY - _getTranslateDelta(mouse.y, scalePrev, this.scale);
+  this.transform.translateX = this.transform.translateX - _getTranslateDelta(mouse.x, scalePrev, this.transform.scale);
+  this.transform.translateY = this.transform.translateY - _getTranslateDelta(mouse.y, scalePrev, this.transform.scale);
 
   function _getTranslateDelta(x, scalePrev, scaleNew) {
     var translateDelta = (x / scalePrev * scaleNew - x) / scaleNew;
     return translateDelta;
   }
 
-  this.draw();
+  render.draw();
 };
 
 CanvasDemo.prototype.mousedown = function(eventHammer) {
@@ -110,8 +117,8 @@ CanvasDemo.prototype.mousedown = function(eventHammer) {
   mousePointInitial = mouse;
   console.log(mouse);
   var point = {};
-  point.x = mouse.x / this.scale - this.translateX;
-  point.y = mouse.y / this.scale - this.translateY;
+  point.x = mouse.x / this.transform.scale - this.transform.translateX;
+  point.y = mouse.y / this.transform.scale - this.transform.translateY;
   var shape = this.getShapeinBounds(point);
   
   mouseupBound = this.mouseup.bind(this);
@@ -125,8 +132,8 @@ CanvasDemo.prototype.mousedown = function(eventHammer) {
     this.hammer.on('panmove', dragBound);
 
   } else {
-    translateInitial = {x: this.translateX, y: this.translateY};
-    translateBound = this.translate.bind(this);
+    translateInitial = {x: this.transform.translateX, y: this.transform.translateY};
+    translateBound = this.setTranslate.bind(this);
     _resetBound = _reset.bind(this, translateBound, mouseupBound);
     // this.canvas.addEventListener('mousemove', translateBound);  //TODO change to hammer
     this.hammer.on('panmove', translateBound);
@@ -141,11 +148,11 @@ CanvasDemo.prototype.drag = function(shape, event) {
   // if (event.which === 1 && mousePointInitial) {
   if (mousePointInitial) {
     var mousePoint = this.canvas.relMouseCoords(event);
-    var deltaX = (mousePoint.x - mousePointInitial.x) / this.scale;
-    var deltaY = (mousePoint.y - mousePointInitial.y) / this.scale;
+    var deltaX = (mousePoint.x - mousePointInitial.x) / this.transform.scale;
+    var deltaY = (mousePoint.y - mousePointInitial.y) / this.transform.scale;
     shape.x = shapePointInitial.x + deltaX;
     shape.y = shapePointInitial.y + deltaY;
-    this.draw();
+    render.draw();
   } else {
     if (_resetBound) {
       _resetBound();
@@ -153,14 +160,14 @@ CanvasDemo.prototype.drag = function(shape, event) {
   }
 }
 
-CanvasDemo.prototype.translate = function(event) {
+CanvasDemo.prototype.setTranslate = function(event) {
   event = event.srcEvent;
   // if (event.which === 1 && mousePointInitial) {
   if (mousePointInitial) {
     var mousePoint = this.canvas.relMouseCoords(event);
-    this.translateX = translateInitial.x + (mousePoint.x - mousePointInitial.x) / this.scale;
-    this.translateY = translateInitial.y + (mousePoint.y - mousePointInitial.y) / this.scale;
-    this.draw();
+    this.transform.translateX = translateInitial.x + (mousePoint.x - mousePointInitial.x) / this.transform.scale;
+    this.transform.translateY = translateInitial.y + (mousePoint.y - mousePointInitial.y) / this.transform.scale;
+    render.draw();
   } else {
     if (_resetBound) {
       _resetBound();
@@ -182,23 +189,10 @@ function _reset(dragBound, mouseupBound) {
   this.hammer.off('panend', mouseupBound);
 };
 
-
-CanvasDemo.prototype.draw = function() {
-  this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
-  this.ctx.translate(this.translateX * this.scale, this.translateY * this.scale);
-  for(var i = 0; i < this.shapes.length; i++) {
-    var shape = this.shapes[i];
-    this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
-    this.ctx.fillRect.apply(this.ctx, shape.getDimensions(this.scale));
-    // this.ctx.strokeRect(45,45,60,60);
-  }
-  this.ctx.translate(-this.translateX * this.scale, -this.translateY * this.scale);
-};
-
 CanvasDemo.prototype.getShapeinBounds = function(point) {
-  // var pointX = point.x - this.translateX;
+  // var pointX = point.x - this.transform.translateX;
   var pointX = point.x;
-  // var pointY = point.y - this.translateY;
+  // var pointY = point.y - this.transform.translateY;
   var pointY = point.y;
   var shape = this.rect;
   for(var i = 0; i < this.shapes.length; i++) {
@@ -213,5 +207,5 @@ CanvasDemo.prototype.getShapeinBounds = function(point) {
 CanvasDemo.prototype.resizeCanvas = function() {
     this.canvas.width  = window.innerWidth;
     this.canvas.height = window.innerHeight;
-    this.draw();
+    render.draw();
 };
