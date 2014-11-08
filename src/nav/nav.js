@@ -46,7 +46,7 @@ module.exports = (function() {
   CanvasDemo.prototype.addHammerEventListeners = function() {
     this.hammer = new Hammer.Manager(this.canvas);
     this.hammer.add(new Hammer.Pan({threshold:0}));
-    this.hammer.add(new Hammer.Press({time:0}));
+    this.hammer.add(new Hammer.Press({pointers: 1, time:0}));
     this.hammer.add(new Hammer.Pinch());
 
     this.hammer.on('pinch', this.setScale.bind(this));
