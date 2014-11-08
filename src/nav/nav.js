@@ -1,6 +1,7 @@
 var Hammer = require('hammerjs');
 var render = require('../render/render.js');  //lowercase render because it's a singleton
-var Rect = require('../model/model.js')
+// var Rect = require('../model/model.js')
+var collection = require('../collection/collection.js')
 
 module.exports = (function() {
 
@@ -18,8 +19,10 @@ module.exports = (function() {
   };
 
   CanvasDemo.prototype.run = function() {
-    this.shapes.push( new Rect(25,25,100,100) );
-    this.shapes.push( new Rect(125,125,200,200) );
+    // this.shapes.push( new Rect(25,25,100,100) );
+    // this.shapes.push( new Rect(125,125,200,200) );
+    //Model.getShapes();
+    this.shapes = collection.get();
     render.init(this.canvas, this.shapes, this.transform);
     this.resizeCanvas();
     window.onresize = this.resizeCanvas.bind(this);
