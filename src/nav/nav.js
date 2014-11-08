@@ -36,7 +36,7 @@ module.exports = (function() {
   var translateInitial = {};
   var dragBound;
   var mouseupBound;
-  var _resetBound;
+  var _resetBound = function(){};
 
   CanvasDemo.prototype.addEventListeners = function() {
     this.canvas.addEventListener('mousewheel', this.setScale.bind(this));
@@ -50,6 +50,7 @@ module.exports = (function() {
     this.hammer.add(new Hammer.Pinch());
 
     this.hammer.on('pinch', this.setScale.bind(this));
+    this.hammer.on('pinchend', _resetBound);  //not sure if this will help bug
     this.hammer.on('press', this.mousedown.bind(this));
     // hammer.on('pan', function(event) {
       // this.ctx.fillStyle = "blue";
