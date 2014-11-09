@@ -45,20 +45,19 @@ module.exports = (function() {
 
   CanvasDemo.prototype.addHammerEventListeners = function() {
     this.hammer = new Hammer.Manager(this.canvas);
-    // this.hammer.add(new Hammer.Pan({threshold:0}));
-    // this.hammer.add(new Hammer.Press({pointers: 1, time:0}));
+    this.hammer.add(new Hammer.Tap());
+    this.hammer.add(new Hammer.Pan({threshold:0}));
+    this.hammer.add(new Hammer.Press({pointers: 1, time:0}));
     // var t1 = new Hammer.Tap({event: 'singleTap', taps: 1});
     // var t2 = new Hammer.Tap({event: 'doubleTap', taps: 2});
     // t1.dropRequireFailure(t2);
     // this.hammer.add([t1, t2]);
-    this.hammer.add(new Hammer.Tap());
-    // this.hammer.add(new Hammer.Tap());
-    // this.hammer.add(new Hammer.Pinch());
+    this.hammer.add(new Hammer.Pinch());
 
     this.hammer.on('pinch', this.setScale.bind(this));
     this.hammer.on('pinchend', _resetBound);  //not sure if this will help bug
     this.hammer.on('press', this.mousedown.bind(this));
-    var t1 = new Hammer.Tap({event: 'singleTap', taps: 1});
+    // var t1 = new Hammer.Tap({event: 'singleTap', taps: 1});
     // this.hammer.on('singleTap', this.singleTap.bind(this));
     // this.hammer.on('doubleTap', this.doubleTap.bind(this));
     this.hammer.on('tap', this.tap.bind(this));
@@ -88,9 +87,9 @@ module.exports = (function() {
 
     if(eventHammer.type === 'mousewheel') {
       if (eventHammer.wheelDeltaY < 0) {
-        this.transform.scale = this.transform.scale * 1.05;
+        this.transform.scale = this.transform.scale * 1.1;
       } else {
-        this.transform.scale = this.transform.scale * 0.95;
+        this.transform.scale = this.transform.scale * 0.90;
       }
     } else if (eventHammer.type === 'pinch') {
       if (eventHammer.scale > 1) {

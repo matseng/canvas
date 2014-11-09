@@ -28,7 +28,7 @@ module.exports = (function() {
     };
     this.notes.push(testNote);
     // render.drawNote(testNote);
-    // this.firebase();  //SAVE
+    this.firebase();  //SAVE
   };
 
   Collection.prototype.firebase = function() {
