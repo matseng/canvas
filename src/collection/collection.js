@@ -1,4 +1,4 @@
-var Rect = require('./shapes.js')
+var Rect = require('./shapes.js');
 
 module.exports = (function() {
 
@@ -11,7 +11,24 @@ module.exports = (function() {
   Collection.prototype.run = function() {
     this.add( new Rect(25,25,100,100) );
     this.add( new Rect(125,125,200,200) );
-    this.firebase();
+    var testNote = {
+      "data" : {
+        "text" : "#myHashtag3",
+        "y" : 250,
+        "x" : 250,
+        "hashtags" : [ "#myHashtag3" ]
+      },
+      "style" : {
+        "top" : 229.86368368933097,
+        "height" : 50,
+        "left" : 101.75178984370329,
+        "width" : 192,
+        "font-size" : "10pt"
+      }
+    };
+    this.notes.push(testNote);
+    // render.drawNote(testNote);
+    // this.firebase();  //SAVE
   };
 
   Collection.prototype.firebase = function() {
