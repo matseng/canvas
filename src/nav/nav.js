@@ -50,17 +50,25 @@ module.exports = (function() {
           console.log(globalPoint);
           var note = collection.getNoteInBounds(globalPoint);
           console.log(note);
-          var textareaRect = canvasDemo.globalToWindowTransform({
-            x: note.data.x,
-            y: note.data.y,
-            width: note.style.width,
-            height: note.style.height
-          });
-          canvasDemo.textarea.style.display = 'block';
-          canvasDemo.textarea.style.left = textareaRect.x + "px";
-          canvasDemo.textarea.style.top = textareaRect.y + "px";
-          canvasDemo.textarea.style.width = textareaRect.width + "px";
-          canvasDemo.textarea.style.height = textareaRect.height + "px";
+          if (note) {
+            var textareaRect = canvasDemo.globalToWindowTransform({
+              x: note.data.x,
+              y: note.data.y,
+              width: note.style.width,
+              height: note.style.height
+            });
+            console.log("scale: " + canvasDemo.transform.scale);
+            var translateX = - textareaRec.width / 4;
+            var translateY = - textareaRec.height / 4;
+            canvasDemo.textarea.value = note.data.text;
+            canvasDemo.textarea.style.width = note.style.width + "px";
+            canvasDemo.textarea.style.height = note.style.height + "px";
+            canvasDemo.textarea.style.left = textareaRect.x + "px";
+            canvasDemo.textarea.style.top = textareaRect.y + "px";
+            canvasDemo.textarea.style.transform = "scale(" + canvasDemo.transform.scale + ")";
+            canvasDemo.textarea.style.webkitTransform = "scale(" + canvasDemo.transform.scale + ")";
+            canvasDemo.textarea.style.display = 'block';
+          }
         }
       }
     };
@@ -94,6 +102,7 @@ module.exports = (function() {
     this.hammer.on('pinchend', _resetBound);  //not sure if this will help bug
     this.hammer.on('press', this.mousedown.bind(this));
     this.hammer.on('tap', this.tap.bind(this));
+    this.hammer.on('pressend', _reset);
 
     // this.hammer.on('press', function(hammerEvent) {
     //   this.hammerFluxDispatcher.dispatch({
@@ -103,6 +112,7 @@ module.exports = (function() {
     // }.bind(this));
 
     this.hammer.on('tap press pinch', function(hammerEvent) {
+    // this.hammer.on('OFF', function(hammerEvent) {
       console.log(hammerEvent.type);
       this.hammerFluxDispatcher.dispatch({
         actionType: 'tap',
@@ -114,6 +124,7 @@ module.exports = (function() {
   
   CanvasDemo.prototype.tap = function(eventHammer) {
     console.log(eventHammer.tapCount);
+
   };
 
   CanvasDemo.prototype.setScale = function(eventHammer) {
@@ -165,6 +176,7 @@ module.exports = (function() {
   }
 
   CanvasDemo.prototype.mousedown = function(eventHammer) {
+    if (_resetBound) _resetBound();  //trying to remove extra listeners
     event = eventHammer.srcEvent;
     var mouse = this.canvas.relMouseCoords(event);
     mousePointInitial = mouse;
@@ -173,27 +185,25 @@ module.exports = (function() {
     point.x = mouse.x / this.transform.scale - this.transform.translateX;
     point.y = mouse.y / this.transform.scale - this.transform.translateY;
     var note = collection.getNoteInBounds(point);
-    
-    mouseupBound = this.mouseup.bind(this);
+    // mouseupBound = this.mouseup.bind(this);
     
     console.log(note);
     if ( note ) {
       notePointInitial = {x: note.data.x, y: note.data.y};
       dragBound = this.drag.bind(this, note);
-      _resetBound = _reset.bind(this, dragBound, mouseupBound);
-      // this.canvas.addEventListener('mousemove', dragBound);
+      // _resetBound = _reset.bind(this, dragBound, mouseupBound);
+      _resetBound = _reset.bind(this, dragBound);
       this.hammer.on('panmove', dragBound);
 
     } else {
       translateInitial = {x: this.transform.translateX, y: this.transform.translateY};
       translateBound = this.setTranslate.bind(this);
-      _resetBound = _reset.bind(this, translateBound, mouseupBound);
-      // this.canvas.addEventListener('mousemove', translateBound);  //TODO change to hammer
+      // _resetBound = _reset.bind(this, translateBound, mouseupBound);
+      _resetBound = _reset.bind(this, translateBound);
       this.hammer.on('panmove', translateBound);
 
     }
-    // this.canvas.addEventListener('mouseup', mouseupBound);
-    this.hammer.on('panend', mouseupBound);
+    // this.hammer.on('panend', mouseupBound);
   };
 
   CanvasDemo.prototype.drag = function(note, event) {
@@ -240,6 +250,7 @@ module.exports = (function() {
     // this.canvas.removeEventListener('mouseup', mouseupBound);
     this.hammer.off('panmove', dragBound);
     this.hammer.off('panend', mouseupBound);
+    console.log('_reset or _resetBound called');
   };
 
   CanvasDemo.prototype.resizeCanvas = function() {
