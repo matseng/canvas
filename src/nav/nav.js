@@ -1,7 +1,8 @@
 var Hammer = require('hammerjs');
 var render = require('../render/render.js');  //lowercase render because it's a singleton
 // var Rect = require('../model/model.js')
-var collection = require('../collection/collection.js')
+var collection = require('../collection/collection.js');
+var Dispatcher = require('flux').Dispatcher;
 
 module.exports = (function() {
 
@@ -15,19 +16,30 @@ module.exports = (function() {
       scale: 1
     };
     this.hammer;
+    this.hammerFluxDispatcher;
     this.run();
   };
 
   CanvasDemo.prototype.run = function() {
-    // this.notes.push( new Rect(25,25,100,100) );
-    // this.notes.push( new Rect(125,125,200,200) );
-    //Model.getnotes();
+    this.HammerDispatcher();
     this.notes = collection.notes;
     render.init(this.canvas, this.notes, this.transform);
     this.resizeCanvas();
     window.onresize = this.resizeCanvas.bind(this);
     this.addEventListeners();
     render.drawNotes();
+  };
+
+  CanvasDemo.prototype.HammerDispatcher = function() {
+    this.hammerFluxDispatcher = new Dispatcher();
+    var TouchStore = {
+      hammerEvent: null,
+      pressHandler: function(payload) {
+        this.hammerEvent = payload.hammerEvent;
+        console.log('Detected hammer press event: ', payload.hammerEvent);
+      }
+    };
+    this.hammerFluxDispatcher.register(TouchStore.pressHandler.bind(TouchStore));
   };
 
 
@@ -48,25 +60,19 @@ module.exports = (function() {
     this.hammer.add(new Hammer.Tap());
     this.hammer.add(new Hammer.Pan({threshold:0}));
     this.hammer.add(new Hammer.Press({pointers: 1, time:0}));
-    // var t1 = new Hammer.Tap({event: 'singleTap', taps: 1});
-    // var t2 = new Hammer.Tap({event: 'doubleTap', taps: 2});
-    // t1.dropRequireFailure(t2);
-    // this.hammer.add([t1, t2]);
     this.hammer.add(new Hammer.Pinch());
 
     this.hammer.on('pinch', this.setScale.bind(this));
     this.hammer.on('pinchend', _resetBound);  //not sure if this will help bug
     this.hammer.on('press', this.mousedown.bind(this));
-    // var t1 = new Hammer.Tap({event: 'singleTap', taps: 1});
-    // this.hammer.on('singleTap', this.singleTap.bind(this));
-    // this.hammer.on('doubleTap', this.doubleTap.bind(this));
     this.hammer.on('tap', this.tap.bind(this));
-    // this.hammer.on('tap', this.doubleTap.bind(this));
-    // hammer.on('pan', function(event) {
-      // this.ctx.fillStyle = "blue";
-      // this.ctx.font = "bold 16px Arial";
-      // this.ctx.fillText("changed hammer", 100, 100);
-    // }.bind(this));
+
+    this.hammer.on('press', function(hammerEvent) {
+      this.hammerFluxDispatcher.dispatch({
+        actionType: 'press',
+        hammerEvent: hammerEvent
+      });
+    }.bind(this));
   };
   
   CanvasDemo.prototype.tap = function(eventHammer) {
@@ -78,7 +84,8 @@ module.exports = (function() {
   };
 
   CanvasDemo.prototype.doubleTap = function(eventHammer) {
-    console.log("double tap");
+    console.log("double tap: open up text area");
+
   };
 
   CanvasDemo.prototype.setScale = function(eventHammer) {
