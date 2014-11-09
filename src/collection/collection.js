@@ -39,7 +39,6 @@ module.exports = (function() {
       var note = snapshot.val();
       note.data.textArr = note.data.text.split('\n');
       this.notes.push(note);
-      console.log(this.notes.length);
       this.add( new Rect(note.data.x, note.data.y, note.style.width, note.style.height));
       // this.add( new Rect(note.style.left, note.style.top, note.style.width, note.style.height));
     }.bind(this));

@@ -24,7 +24,7 @@ body {
   border: 0px black solid;
 }
 
-#note-input {
+#textarea {
   position: absolute;
-  display: none;
+  /*display: none;*/
 }

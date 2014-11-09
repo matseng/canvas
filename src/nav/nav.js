@@ -8,6 +8,7 @@ module.exports = (function() {
 
   var CanvasDemo = function() {
     this.canvas = document.getElementById('canvas');
+    this.textarea = document.getElementById('textarea');
     this.ctx;
     this.notes;
     this.transform = {
@@ -49,6 +50,17 @@ module.exports = (function() {
           console.log(globalPoint);
           var note = collection.getNoteInBounds(globalPoint);
           console.log(note);
+          var textareaRect = canvasDemo.globalToWindowTransform({
+            x: note.data.x,
+            y: note.data.y,
+            width: note.style.width,
+            height: note.style.height
+          });
+          canvasDemo.textarea.style.display = 'block';
+          canvasDemo.textarea.style.left = textareaRect.x + "px";
+          canvasDemo.textarea.style.top = textareaRect.y + "px";
+          canvasDemo.textarea.style.width = textareaRect.width + "px";
+          canvasDemo.textarea.style.height = textareaRect.height + "px";
         }
       }
     };
@@ -78,10 +90,10 @@ module.exports = (function() {
     this.hammer.add(new Hammer.Press({pointers: 1, time:0}));
     this.hammer.add(new Hammer.Pinch());
 
-    // this.hammer.on('pinch', this.setScale.bind(this));
-    // this.hammer.on('pinchend', _resetBound);  //not sure if this will help bug
-    // this.hammer.on('press', this.mousedown.bind(this));
-    // this.hammer.on('tap', this.tap.bind(this));
+    this.hammer.on('pinch', this.setScale.bind(this));
+    this.hammer.on('pinchend', _resetBound);  //not sure if this will help bug
+    this.hammer.on('press', this.mousedown.bind(this));
+    this.hammer.on('tap', this.tap.bind(this));
 
     // this.hammer.on('press', function(hammerEvent) {
     //   this.hammerFluxDispatcher.dispatch({
@@ -90,7 +102,7 @@ module.exports = (function() {
     //   });
     // }.bind(this));
 
-    this.hammer.on('tap pan press pinch', function(hammerEvent) {
+    this.hammer.on('tap press pinch', function(hammerEvent) {
       console.log(hammerEvent.type);
       this.hammerFluxDispatcher.dispatch({
         actionType: 'tap',
@@ -138,6 +150,18 @@ module.exports = (function() {
       x: windowPoint.x / this.transform.scale - this.transform.translateX,
       y: windowPoint.y / this.transform.scale - this.transform.translateY
     };
+  };
+
+  CanvasDemo.prototype.globalToWindowTransform = function(globalObj) {
+    var windowObj = {};
+    windowObj.x = (globalObj.x + this.transform.translateX) * this.transform.scale;
+    windowObj.y = (globalObj.y + this.transform.translateY) * this.transform.scale;
+    if ( globalObj.width && globalObj.height) {
+      windowObj.width = globalObj.width * this.transform.scale;
+      windowObj.height = globalObj.height * this.transform.scale;
+      return windowObj;
+    }
+    return windowObj;
   }
 
   CanvasDemo.prototype.mousedown = function(eventHammer) {
