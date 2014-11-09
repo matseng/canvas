@@ -23,3 +23,8 @@ body {
   -webkit-overflow-scrolling: touch;
   border: 0px black solid;
 }
+
+#note-input {
+  position: absolute;
+  display: none;
+}
