@@ -37,17 +37,20 @@ module.exports = (function() {
   };
 
   Render.prototype.drawNote = function(note) {
+    var xWindow = note.data.x * this.transform.scale;
+    var yWindow = note.data.y * this.transform.scale;
     this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
-    this.ctx.fillRect.apply(this.ctx, [note.data.x * this.transform.scale, note.data.y * this.transform.scale, note.style.width * this.transform.scale, note.style.height * this.transform.scale]);
-    // this.drawText(note)  //SAVE
+    this.ctx.fillRect.apply(this.ctx, [xWindow, yWindow, note.style.width * this.transform.scale, note.style.height * this.transform.scale]);
+    this.drawText(note, xWindow, yWindow)  //SAVE
   };
 
-  Render.prototype.drawText = function(note) {
-    // var textArr = note.data.text.split('\n');
-    for(var i = 0; i < note.data.textArr.length; i++) {
+  Render.prototype.drawText = function(note, xWindow, yWindow) {
       this.ctx.fillStyle = "blue";
       this.ctx.font = 12 * this.transform.scale + "px Arial";
-      this.ctx.fillText(" " + note.data.textArr[i], note.data.x * this.transform.scale, (note.data.y + 12 * (i+2)) * this.transform.scale);
+      // var xWindow = note.data.x * this.transform.scale;
+    for(var i = 0; i < note.data.textArr.length; i++) {
+      // this.ctx.fillText(" " + note.data.textArr[i], xWindow, (note.data.y + 12 * (i + 2) - 6) * this.transform.scale);
+      this.ctx.fillText(" " + note.data.textArr[i], xWindow, yWindow + (12 * (i + 2) - 6) * this.transform.scale);
     }
   }
 
