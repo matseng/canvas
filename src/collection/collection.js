@@ -26,6 +26,7 @@ module.exports = (function() {
         "font-size" : "10pt"
       }
     };
+    testNote.data.textArr = testNote.data.text.split("\n");
     this.notes.push(testNote);
     // render.drawNote(testNote);
     this.firebase();  //SAVE
@@ -36,6 +37,7 @@ module.exports = (function() {
     var notesRef = ref.child('notes2');
     notesRef.on("child_added", function(snapshot) {
       var note = snapshot.val();
+      note.data.textArr = note.data.text.split('\n');
       this.notes.push(note);
       console.log(this.notes.length);
       this.add( new Rect(note.data.x, note.data.y, note.style.width, note.style.height));

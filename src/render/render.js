@@ -46,11 +46,11 @@ module.exports = (function() {
   };
 
   Render.prototype.drawText = function(note) {
-    var textArr = note.data.text.split('\n');
-    for(var i = 0; i < textArr.length; i++) {
+    // var textArr = note.data.text.split('\n');
+    for(var i = 0; i < note.data.textArr.length; i++) {
       this.ctx.fillStyle = "blue";
       this.ctx.font = 12 * this.transform.scale + "px Arial";
-      this.ctx.fillText(" " + textArr[i], note.data.x * this.transform.scale, (note.data.y + 12 * (i+2)) * this.transform.scale);
+      this.ctx.fillText(" " + note.data.textArr[i], note.data.x * this.transform.scale, (note.data.y + 12 * (i+2)) * this.transform.scale);
     }
   }
 
