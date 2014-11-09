@@ -45,18 +45,41 @@ module.exports = (function() {
 
   CanvasDemo.prototype.addHammerEventListeners = function() {
     this.hammer = new Hammer.Manager(this.canvas);
-    this.hammer.add(new Hammer.Pan({threshold:0}));
-    this.hammer.add(new Hammer.Press({pointers: 1, time:0}));
-    this.hammer.add(new Hammer.Pinch());
+    // this.hammer.add(new Hammer.Pan({threshold:0}));
+    // this.hammer.add(new Hammer.Press({pointers: 1, time:0}));
+    // var t1 = new Hammer.Tap({event: 'singleTap', taps: 1});
+    // var t2 = new Hammer.Tap({event: 'doubleTap', taps: 2});
+    // t1.dropRequireFailure(t2);
+    // this.hammer.add([t1, t2]);
+    this.hammer.add(new Hammer.Tap());
+    // this.hammer.add(new Hammer.Tap());
+    // this.hammer.add(new Hammer.Pinch());
 
     this.hammer.on('pinch', this.setScale.bind(this));
     this.hammer.on('pinchend', _resetBound);  //not sure if this will help bug
     this.hammer.on('press', this.mousedown.bind(this));
+    var t1 = new Hammer.Tap({event: 'singleTap', taps: 1});
+    // this.hammer.on('singleTap', this.singleTap.bind(this));
+    // this.hammer.on('doubleTap', this.doubleTap.bind(this));
+    this.hammer.on('tap', this.tap.bind(this));
+    // this.hammer.on('tap', this.doubleTap.bind(this));
     // hammer.on('pan', function(event) {
       // this.ctx.fillStyle = "blue";
       // this.ctx.font = "bold 16px Arial";
       // this.ctx.fillText("changed hammer", 100, 100);
     // }.bind(this));
+  };
+  
+  CanvasDemo.prototype.tap = function(eventHammer) {
+    console.log(eventHammer.tapCount);
+  };
+
+  CanvasDemo.prototype.singleTap = function(eventHammer) {
+    console.log("single tap");
+  };
+
+  CanvasDemo.prototype.doubleTap = function(eventHammer) {
+    console.log("double tap");
   };
 
   CanvasDemo.prototype.setScale = function(eventHammer) {
