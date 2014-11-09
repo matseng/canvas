@@ -8,7 +8,7 @@ module.exports = (function() {
   var CanvasDemo = function() {
     this.canvas = document.getElementById('canvas');
     this.ctx;
-    this.shapes = [];
+    this.notes;
     this.transform = {
       translateX: 0,
       translateY: 0,
@@ -19,20 +19,20 @@ module.exports = (function() {
   };
 
   CanvasDemo.prototype.run = function() {
-    // this.shapes.push( new Rect(25,25,100,100) );
-    // this.shapes.push( new Rect(125,125,200,200) );
-    //Model.getShapes();
-    this.shapes = collection.get();
-    render.init(this.canvas, this.shapes, this.transform);
+    // this.notes.push( new Rect(25,25,100,100) );
+    // this.notes.push( new Rect(125,125,200,200) );
+    //Model.getnotes();
+    this.notes = collection.notes;
+    render.init(this.canvas, this.notes, this.transform);
     this.resizeCanvas();
     window.onresize = this.resizeCanvas.bind(this);
     this.addEventListeners();
-    render.draw();
+    render.drawNotes();
   };
 
 
   var mousePointInitial = {};
-  var shapePointInitial = {};
+  var notePointInitial = {};
   var translateInitial = {};
   var dragBound;
   var mouseupBound;
@@ -85,7 +85,7 @@ module.exports = (function() {
       return translateDelta;
     }
 
-    render.draw();
+    render.drawNotes();
   };
 
   CanvasDemo.prototype.mousedown = function(eventHammer) {
@@ -96,14 +96,14 @@ module.exports = (function() {
     var point = {};
     point.x = mouse.x / this.transform.scale - this.transform.translateX;
     point.y = mouse.y / this.transform.scale - this.transform.translateY;
-    var shape = this.getShapeinBounds(point);
+    var note = collection.getNoteInBounds(point);
     
     mouseupBound = this.mouseup.bind(this);
     
-    console.log(shape);
-    if ( shape ) {
-      shapePointInitial = {x: shape.x, y: shape.y};
-      dragBound = this.drag.bind(this, shape);
+    console.log(note);
+    if ( note ) {
+      notePointInitial = {x: note.data.x, y: note.data.y};
+      dragBound = this.drag.bind(this, note);
       _resetBound = _reset.bind(this, dragBound, mouseupBound);
       // this.canvas.addEventListener('mousemove', dragBound);
       this.hammer.on('panmove', dragBound);
@@ -120,16 +120,16 @@ module.exports = (function() {
     this.hammer.on('panend', mouseupBound);
   };
 
-  CanvasDemo.prototype.drag = function(shape, event) {
+  CanvasDemo.prototype.drag = function(note, event) {
     event = event.srcEvent;
     // if (event.which === 1 && mousePointInitial) {
     if (mousePointInitial) {
       var mousePoint = this.canvas.relMouseCoords(event);
       var deltaX = (mousePoint.x - mousePointInitial.x) / this.transform.scale;
       var deltaY = (mousePoint.y - mousePointInitial.y) / this.transform.scale;
-      shape.x = shapePointInitial.x + deltaX;
-      shape.y = shapePointInitial.y + deltaY;
-      render.draw();
+      note.data.x = notePointInitial.x + deltaX;
+      note.data.y = notePointInitial.y + deltaY;
+      render.drawNotes();
     } else {
       if (_resetBound) {
         _resetBound();
@@ -144,7 +144,7 @@ module.exports = (function() {
       var mousePoint = this.canvas.relMouseCoords(event);
       this.transform.translateX = translateInitial.x + (mousePoint.x - mousePointInitial.x) / this.transform.scale;
       this.transform.translateY = translateInitial.y + (mousePoint.y - mousePointInitial.y) / this.transform.scale;
-      render.draw();
+      render.drawNotes();
     } else {
       if (_resetBound) {
         _resetBound();
@@ -158,7 +158,7 @@ module.exports = (function() {
 
   function _reset(dragBound, mouseupBound) {
     mousePointInitial = null;
-    shapePointInitial = null;
+    notePointInitial = null;
     translateInitial = null;
     // this.canvas.removeEventListener('mousemove', dragBound);
     // this.canvas.removeEventListener('mouseup', mouseupBound);
@@ -166,25 +166,10 @@ module.exports = (function() {
     this.hammer.off('panend', mouseupBound);
   };
 
-  CanvasDemo.prototype.getShapeinBounds = function(point) {
-    // var pointX = point.x - this.transform.translateX;
-    var pointX = point.x;
-    // var pointY = point.y - this.transform.translateY;
-    var pointY = point.y;
-    var shape = this.rect;
-    for(var i = 0; i < this.shapes.length; i++) {
-      shape = this.shapes[i];
-      if ( (shape.x <= pointX) && (pointX <= shape.x + shape.width) && (shape.y <= pointY) && (pointY <= shape.y + shape.height) ){
-        return shape;
-      }
-    }
-    return null;
-  };
-
   CanvasDemo.prototype.resizeCanvas = function() {
       this.canvas.width  = window.innerWidth;
       this.canvas.height = window.innerHeight;
-      render.draw();
+      render.drawNotes();
   };
 
   return CanvasDemo;

@@ -3,7 +3,7 @@ var Rect = require('./shapes.js')
 module.exports = (function() {
 
   var Collection = function() {
-    this.notes =[];
+    this.notes = [];
     this.shapes = [];
     this.run();
   }
@@ -20,6 +20,7 @@ module.exports = (function() {
     notesRef.on("child_added", function(snapshot) {
       var note = snapshot.val();
       this.notes.push(note);
+      console.log(this.notes.length);
       this.add( new Rect(note.data.x, note.data.y, note.style.width, note.style.height));
       // this.add( new Rect(note.style.left, note.style.top, note.style.width, note.style.height));
     }.bind(this));
@@ -36,8 +37,10 @@ module.exports = (function() {
 
   Collection.prototype.getNoteInBounds = function(point) {
     var note;
+    // var shape;  //REMOVE later 
     for(var i = 0; i < this.notes.length; i++) {
       note = this.notes[i];
+      shape = this.shapes[i];
       if ( 
         note.data.x <= point.x && 
         point.x <= note.data.x + note.style.width && 
@@ -45,6 +48,7 @@ module.exports = (function() {
         point.y <= note.data.y + note.style.height 
       ) {
         return note;
+        // return shape;
       }
     }
     return null;
