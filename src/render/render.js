@@ -39,10 +39,7 @@ module.exports = (function() {
   Render.prototype.drawNote = function(note) {
     this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
     this.ctx.fillRect.apply(this.ctx, [note.data.x * this.transform.scale, note.data.y * this.transform.scale, note.style.width * this.transform.scale, note.style.height * this.transform.scale]);
-    this.drawText(note)
-    // this.ctx.fillStyle = "blue";
-    // this.ctx.font = 12 * this.transform.scale + "px Arial";
-    // this.ctx.fillText(note.data.text, note.data.x * this.transform.scale, note.data.y * this.transform.scale);
+    // this.drawText(note)  //SAVE
   };
 
   Render.prototype.drawText = function(note) {
