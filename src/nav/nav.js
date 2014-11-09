@@ -32,14 +32,30 @@ module.exports = (function() {
 
   CanvasDemo.prototype.HammerDispatcher = function() {
     this.hammerFluxDispatcher = new Dispatcher();
+    var canvasDemo = this;
     var TouchStore = {
-      hammerEvent: null,
+      hammerEventStart: null,
       pressHandler: function(payload) {
-        this.hammerEvent = payload.hammerEvent;
-        console.log('Detected hammer press event: ', payload.hammerEvent);
+        if ('press' === payload.actionType) {
+          this.hammerEvent = payload.hammerEvent;
+          console.log('Flux Dispatch: Detected hammer press event: ', payload.hammerEvent);
+        }
+      },
+      doubleTapHandler: function(payload) {
+        if( 2 === payload.hammerEvent.tapCount ) {
+          console.log('If a note was double tapped then edit it');
+          var windowPoint = canvasDemo.canvas.relMouseCoords(payload.hammerEvent);
+          var globalPoint = canvasDemo.windowToGlobalPoint(windowPoint);
+          console.log(globalPoint);
+          var note = collection.getNoteInBounds(globalPoint);
+          console.log(note);
+        }
       }
     };
+
+
     this.hammerFluxDispatcher.register(TouchStore.pressHandler.bind(TouchStore));
+    this.hammerFluxDispatcher.register(TouchStore.doubleTapHandler.bind(TouchStore));
   };
 
 
@@ -62,30 +78,30 @@ module.exports = (function() {
     this.hammer.add(new Hammer.Press({pointers: 1, time:0}));
     this.hammer.add(new Hammer.Pinch());
 
-    this.hammer.on('pinch', this.setScale.bind(this));
-    this.hammer.on('pinchend', _resetBound);  //not sure if this will help bug
-    this.hammer.on('press', this.mousedown.bind(this));
-    this.hammer.on('tap', this.tap.bind(this));
+    // this.hammer.on('pinch', this.setScale.bind(this));
+    // this.hammer.on('pinchend', _resetBound);  //not sure if this will help bug
+    // this.hammer.on('press', this.mousedown.bind(this));
+    // this.hammer.on('tap', this.tap.bind(this));
 
-    this.hammer.on('press', function(hammerEvent) {
+    // this.hammer.on('press', function(hammerEvent) {
+    //   this.hammerFluxDispatcher.dispatch({
+    //     actionType: 'press',
+    //     hammerEvent: hammerEvent
+    //   });
+    // }.bind(this));
+
+    this.hammer.on('tap pan press pinch', function(hammerEvent) {
+      console.log(hammerEvent.type);
       this.hammerFluxDispatcher.dispatch({
-        actionType: 'press',
+        actionType: 'tap',
         hammerEvent: hammerEvent
       });
     }.bind(this));
+
   };
   
   CanvasDemo.prototype.tap = function(eventHammer) {
     console.log(eventHammer.tapCount);
-  };
-
-  CanvasDemo.prototype.singleTap = function(eventHammer) {
-    console.log("single tap");
-  };
-
-  CanvasDemo.prototype.doubleTap = function(eventHammer) {
-    console.log("double tap: open up text area");
-
   };
 
   CanvasDemo.prototype.setScale = function(eventHammer) {
@@ -116,6 +132,13 @@ module.exports = (function() {
 
     render.drawNotes();
   };
+
+  CanvasDemo.prototype.windowToGlobalPoint = function(windowPoint) {
+    return {
+      x: windowPoint.x / this.transform.scale - this.transform.translateX,
+      y: windowPoint.y / this.transform.scale - this.transform.translateY
+    };
+  }
 
   CanvasDemo.prototype.mousedown = function(eventHammer) {
     event = eventHammer.srcEvent;
