@@ -51,33 +51,31 @@ module.exports = (function() {
           var note = collection.getNoteInBounds(globalPoint);
           console.log(note);
           if (note) {
-            var textareaRect = canvasDemo.globalToWindowTransform({
+            var textareaRectGlobal = {
               x: note.data.x,
               y: note.data.y,
               width: note.style.width,
               height: note.style.height
-            });
-            console.log("scale: " + canvasDemo.transform.scale);
-            var translateX = - textareaRec.width / 4;
-            var translateY = - textareaRec.height / 4;
+            };
+            var textareaRectWindow = canvasDemo.globalToWindowTransform(textareaRectGlobal);
+            var deltaToOriginX = - note.style.width * (1 - canvasDemo.transform.scale) / 2 - 3;
+            var deltaToOriginY = - note.style.height * (1 - canvasDemo.transform.scale) / 2 - 3;
+            var translateX = deltaToOriginX + textareaRectWindow.x;
+            var translateY = deltaToOriginY + textareaRectWindow.y;
+
             canvasDemo.textarea.value = note.data.text;
             canvasDemo.textarea.style.width = note.style.width + "px";
             canvasDemo.textarea.style.height = note.style.height + "px";
-            canvasDemo.textarea.style.left = textareaRect.x + "px";
-            canvasDemo.textarea.style.top = textareaRect.y + "px";
-            canvasDemo.textarea.style.transform = "scale(" + canvasDemo.transform.scale + ")";
-            canvasDemo.textarea.style.webkitTransform = "scale(" + canvasDemo.transform.scale + ")";
+            canvasDemo.textarea.style.webkitTransform = "matrix(" + canvasDemo.transform.scale + ", 0, 0, " + canvasDemo.transform.scale + ", " + translateX + ',' + translateY +')';
             canvasDemo.textarea.style.display = 'block';
           }
         }
       }
     };
 
-
     this.hammerFluxDispatcher.register(TouchStore.pressHandler.bind(TouchStore));
     this.hammerFluxDispatcher.register(TouchStore.doubleTapHandler.bind(TouchStore));
   };
-
 
   var mousePointInitial = {};
   var notePointInitial = {};
