@@ -69,6 +69,7 @@ module.exports = (function() {
             canvasDemo.textarea.style.transform = "matrix(" + canvasDemo.transform.scale + ", 0, 0, " + canvasDemo.transform.scale + ", " + translateX + ',' + translateY +')';
             canvasDemo.textarea.style.webkitTransform = "matrix(" + canvasDemo.transform.scale + ", 0, 0, " + canvasDemo.transform.scale + ", " + translateX + ',' + translateY +')';
             canvasDemo.textarea.style.display = 'block';
+            canvasDemo.textarea.focus();
           }
         }
       }
