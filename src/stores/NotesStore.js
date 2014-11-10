@@ -7,13 +7,19 @@ var assign = require('object-assign');
 var CHANGE_EVENT = 'change';
 
 var _notes = {};
-var _mostRecentKey;
+var _mostRecentNote = {};
 
 function _addNote(note) {
   var key = Object.keys(note)[0];
   _notes[key] = note[key];
-  _mostRecentKey = key;
+  _setMostRecentNote(note, key);
 }
+
+function _setMostRecentNote(note, key) {
+  var keyOld = Object.keys(_mostRecentNote)[0];
+  delete _mostRecentNote[keyOld];
+  assign(_mostRecentNote, note[key]);
+};
 
 var NotesStore = assign({}, EventEmitter.prototype, {
   
@@ -30,7 +36,7 @@ var NotesStore = assign({}, EventEmitter.prototype, {
   },
 
   getMostRecent: function() {
-    return _notes[_mostRecentKey];
+    return _mostRecentNote;
   },
 
 });

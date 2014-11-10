@@ -1,5 +1,7 @@
 var CanvasView = require('./components/CanvasView.js');
 var FirebaseUtils = require('./utils/FirebaseUtils');
 
-CanvasView.load();
-FirebaseUtils.init();
+window.onload = function() {
+  CanvasView.load();
+  FirebaseUtils.init();
+}

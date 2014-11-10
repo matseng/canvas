@@ -5,18 +5,20 @@ var CanvasAppDispatcher = require('../dispatcher/CanvasAppDispatcher');
 var NotesStore = require('../stores/NotesStore');
 var Hammer = require('hammerjs');
 
-// function getStateFromStore() {
-//   return {
-//     transform: null,
-//     notes: NotesStore.getAll(),
-//     mostRecentNote: NotesStore.getMostRecent(),
-//   };
-// };
+var _transform = {
+  translateX: 0,
+  translateY: 0,
+  scale: 1
+};
+var _notes = NotesStore.getAll();
+var _mostRecentNote = NotesStore.getMostRecent();
 
 var CanvasView = {
     
     canvas: document.getElementById('canvas'),
 
+    ctx: document.getElementById('canvas').getContext('2d'),
+    
     load: function() {
       this.resizeCanvas();
       this.addTouchEventListeners();
@@ -25,7 +27,6 @@ var CanvasView = {
     },
 
     addTouchEventListeners: function() {
-        //listen for hammer events and then dispatch an action for this touch event
       this.hammer = new Hammer.Manager(this.canvas);
       this.hammer.add(new Hammer.Tap());
       this.hammer.add(new Hammer.Pan({threshold:0}));
@@ -42,15 +43,23 @@ var CanvasView = {
     },
 
     addChangeListeners: function() {
-      NotesStore.addChangeListener(this.renderNote);
+      NotesStore.addChangeListener(this.renderNote.bind(this));
     },
 
     render: function() {
       console.log('Render invoked');
     },
 
-    renderNote: function() {
+    renderNote: function(note) {
+      note = note || _mostRecentNote;
       console.log('will render a single note');
+      console.log(note);
+      var xWindow = note.data.x * _transform.scale;
+      var yWindow = note.data.y * _transform.scale;
+      this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
+      this.ctx.fillRect.apply(this.ctx, [xWindow, yWindow, note.style.width * _transform.scale, note.style.height * _transform.scale]);
+  //   this.drawText(note, xWindow, yWindow)  //SAVE for later
+
     },
 
     resizeCanvas: function() {

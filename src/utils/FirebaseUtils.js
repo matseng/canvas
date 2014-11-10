@@ -36,8 +36,8 @@ module.exports = {
     notesRef.on("child_added", function(snapshot) {
       var note = snapshot.val();
       note.data.textArr = note.data.text.split('\n');
-      this.notes.push(note);
-      this.add( new Rect(note.data.x, note.data.y, note.style.width, note.style.height));
+      // this.notes.push(note);
+      // this.add( new Rect(note.data.x, note.data.y, note.style.width, note.style.height));
     }.bind(this));
 
   },
