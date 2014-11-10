@@ -2,13 +2,22 @@
 
 //require NotesStore, NaviationStore, CanvasAppDispatcher
 var CanvasAppDispatcher = require('../dispatcher/CanvasAppDispatcher');
+var NotesStore = require('../stores/NotesStore');
 var Hammer = require('hammerjs');
+
+// function getStateFromStore() {
+//   return {
+//     transform: null,
+//     notes: NotesStore.getAll(),
+//     mostRecentNote: NotesStore.getMostRecent(),
+//   };
+// };
 
 var CanvasView = {
     
     canvas: document.getElementById('canvas'),
 
-    run: function() {
+    load: function() {
       this.resizeCanvas();
       this.addTouchEventListeners();
       this.addChangeListeners();
@@ -33,15 +42,16 @@ var CanvasView = {
     },
 
     addChangeListeners: function() {
-      // NotesStore.addChangeListener(this.renderAllNotes);
-      // NavigationStore.addChangeListener(this.renderAllNotes);
+      NotesStore.addChangeListener(this.renderNote);
     },
 
     render: function() {
       console.log('Render invoked');
     },
 
-    renderNote: function() {},
+    renderNote: function() {
+      console.log('will render a single note');
+    },
 
     resizeCanvas: function() {
       this.canvas.width  = window.innerWidth;

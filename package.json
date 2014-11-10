@@ -27,6 +27,7 @@
     "mocha": "^2.0.1"
   },
   "dependencies": {
+    "events": "^1.0.2",
     "flux": "^2.0.1",
     "hammerjs": "^2.0.4",
     "object-assign": "^1.0.0"
