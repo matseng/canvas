@@ -66,6 +66,7 @@ module.exports = (function() {
             canvasDemo.textarea.value = note.data.text;
             canvasDemo.textarea.style.width = note.style.width + "px";
             canvasDemo.textarea.style.height = note.style.height + "px";
+            canvasDemo.textarea.style.transform = "matrix(" + canvasDemo.transform.scale + ", 0, 0, " + canvasDemo.transform.scale + ", " + translateX + ',' + translateY +')';
             canvasDemo.textarea.style.webkitTransform = "matrix(" + canvasDemo.transform.scale + ", 0, 0, " + canvasDemo.transform.scale + ", " + translateX + ',' + translateY +')';
             canvasDemo.textarea.style.display = 'block';
           }
