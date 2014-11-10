@@ -1,6 +1,16 @@
+To build and watch (Flux refactor):
+ $ grunt flux
+ $ grunt watch:flux
+
+To build and watch (OLD):
+  $ grunt
+  $ grunt watch
+
 To run local tests for each module:
   $ watchify src/nav/tests/spec/moduleSpec.js -o src/nav/tests/dist/testsBundle.js
   $ open src/nav/tests/specRunner.html
+
+--
 
 --
 TODO:

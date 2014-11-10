@@ -37,11 +37,23 @@ module.exports = function(grunt) {
         src: [ 'src/**/tests/spec/*.js' ],
         dest: './dist/bundleTests.js',
         options: {
-          external: [ './<%= pkg.name %>.js' ],
+          external: [ './<%= pkg.name %>.js' ],  // exclude these files in the bundle
           // Embed source map for tests
-          debug: true
+          browserifyOptions: {
+            debug: true
+          }
         }
       },
+
+      flux: {
+        src: [ 'src/app.js' ],
+        dest: './dist/bundleFlux.js',
+        options: {
+          browserifyOptions: {
+            debug: true
+          }
+        }
+      }
     },
 
     mochaTest: {
@@ -54,8 +66,14 @@ module.exports = function(grunt) {
     },
 
     watch: {
-      files: ['<%= jshint.files %>'],
-      tasks: ['default']
+      origingal: {
+        files: ['<%= jshint.files %>'],
+        tasks: ['default']
+      },
+      flux: {
+        files: ['<%= jshint.files %>'],
+        tasks: ['flux']
+      }
     },
 
   });
@@ -74,7 +92,7 @@ module.exports = function(grunt) {
     // 'mochaTest',
   ]);
 
-  // grunt.registerTask('watch', ['watch']);
+  grunt.registerTask('flux', ['browserify:flux']);
 
 };
 
