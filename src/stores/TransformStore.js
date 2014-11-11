@@ -51,26 +51,22 @@ function _zoomStart(hammerEvent) {
   console.log(_pinchStart);
 };
 
-function _zoom(hammerEvent, eventName) {
+function _zoomStart(event) {
+  _pinchStart.translateX = _transform.translateX;
+  _pinchStart.translateY = _transform.translateY;
+  _pinchStart.scale = _transform.scale;
+  _pinchStart.center = {x: event.pageX, y: event.pageY};
+}
 
+function _zoom(hammerEvent, eventName) {
   if(hammerEvent.type === 'mousewheel') {
-    _pinchStart.translateX = _transform.translateX;
-    _pinchStart.translateY = _transform.translateY;
-    _pinchStart.scale = _transform.scale;
-    _pinchStart.center = {x: hammerEvent.pageX, y:hammerEvent.pageY};
-    if (hammerEvent.wheelDeltaY < 0) {
-      _transform.scale = _transform.scale * 1.1;
-    } else {
-      _transform.scale = _transform.scale * 0.90;
-    }
+    _zoomStart(hammerEvent);
+    _transform.scale = (hammerEvent.wheelDeltaY < 0) ? _transform.scale * 1.1 : _transform.scale * 0.90;
   } else {
-    var newDist = _distHammerPinchEvent(hammerEvent);
-    var newScale = _pinchStart.scale * newDist / _pinchStart.dist;
+    var newPinchDist = _distHammerPinchEvent(hammerEvent);
+    var newScale = _pinchStart.scale * newPinchDist / _pinchStart.dist;
     _transform.scale = newScale;
   }
-
-  console.log(_transform.scale); 
-
   _transform.translateX = _pinchStart.translateX - _getTranslateDelta(_pinchStart.center.x, _pinchStart.scale, _transform.scale);
   _transform.translateY = _pinchStart.translateY - _getTranslateDelta(_pinchStart.center.y, _pinchStart.scale, _transform.scale);
 };
@@ -78,14 +74,13 @@ function _zoom(hammerEvent, eventName) {
 function _getTranslateDelta(x, scalePrev, scaleNew) {
   var translateDelta = (x / scalePrev * scaleNew - x) / scaleNew;
   return translateDelta;
-}
-
+};
 
 function _distHammerPinchEvent (hammerPinchEvent) {
-    return _dist(
-      {x: hammerPinchEvent.pointers[0].pageX, y:hammerPinchEvent.pointers[0].pageY},
-      {x: hammerPinchEvent.pointers[1].pageX, y:hammerPinchEvent.pointers[1].pageY}
-    );
+  return _dist(
+    {x: hammerPinchEvent.pointers[0].pageX, y:hammerPinchEvent.pointers[0].pageY},
+    {x: hammerPinchEvent.pointers[1].pageX, y:hammerPinchEvent.pointers[1].pageY}
+  );
 };
 
 function _dist(a, b) {
