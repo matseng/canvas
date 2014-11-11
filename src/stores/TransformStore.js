@@ -15,6 +15,10 @@ var _transform = {
 var Transform = _assign({}, EventEmitter.prototype, {
   get: function() {
     return _transform;
+  },
+
+  getScale: function() {
+    return _transform.scale;
   }
 });
 

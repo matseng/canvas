@@ -5,6 +5,7 @@ var CanvasAppDispatcher = require('../dispatcher/CanvasAppDispatcher');
 var NotesStore = require('../stores/NotesStore');
 var Hammer = require('hammerjs');
 var TransformStore = require('../stores/TransformStore');
+var _getRelativeLeftTop = require('../utils/GetRelativeLeftTop.js');
 
 var _transform;
 var _notes;
@@ -36,30 +37,35 @@ var CanvasView = {
       this.hammer.add(new Hammer.Press({pointers: 1, time:0}));
       this.hammer.add(new Hammer.Pinch());
 
-      this.hammer.on('tap press pinch', function(hammerEvent) {
-        console.log('Touch event detected');
+      this.hammer.on('tap press pinch pan', function(hammerEvent) {
         CanvasAppDispatcher.dispatch({
           actionType: hammerEvent.type,
-          hammerEvent: hammerEvent
+          hammerEvent: hammerEvent,
+          utils: {_getRelativeLeftTop: _getRelativeLeftTop.bind(CanvasView.canvas)}
         });
       });
     },
 
     addChangeListeners: function() {
-      NotesStore.addChangeListener(function() {
+      NotesStore.addChangeListener('added', function() {
         _updateStateFromStore();
         CanvasView.renderNote();
+      });
+      NotesStore.addChangeListener('dragged', function() {
+        _updateStateFromStore();
+        CanvasView.render();
       });
     },
 
     render: function() {
-      console.log('Render invoked');
+      this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
+      for(var key in _notes) {
+        CanvasView.renderNote(_notes[key]);
+      }
     },
 
     renderNote: function(note) {
       note = note || _mostRecentNote;
-      console.log('will render a single note');
-      console.log(note);
       var left = note.data.x * _transform.scale;
       var top = note.data.y * _transform.scale;
       CanvasView.renderShape(note, left, top);
