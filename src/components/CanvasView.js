@@ -10,8 +10,14 @@ var _transform = {
   translateY: 0,
   scale: 1
 };
-var _notes = NotesStore.getAll();
-var _mostRecentNote = NotesStore.getMostRecent();
+var _notes;
+var _mostRecentNote;
+
+function _updateStateFromStore() {
+  // _transform = TransformStore.get();  //SAVE for later
+  _notes = NotesStore.getAll();
+  _mostRecentNote = NotesStore.getMostRecent();  
+};
 
 var CanvasView = {
     
@@ -43,7 +49,10 @@ var CanvasView = {
     },
 
     addChangeListeners: function() {
-      NotesStore.addChangeListener(this.renderNote.bind(this));
+      NotesStore.addChangeListener(function() {
+        _updateStateFromStore();
+        CanvasView.renderNote();
+      });
     },
 
     render: function() {
@@ -54,12 +63,23 @@ var CanvasView = {
       note = note || _mostRecentNote;
       console.log('will render a single note');
       console.log(note);
-      var xWindow = note.data.x * _transform.scale;
-      var yWindow = note.data.y * _transform.scale;
-      this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
-      this.ctx.fillRect.apply(this.ctx, [xWindow, yWindow, note.style.width * _transform.scale, note.style.height * _transform.scale]);
-  //   this.drawText(note, xWindow, yWindow)  //SAVE for later
+      var left = note.data.x * _transform.scale;
+      var top = note.data.y * _transform.scale;
+      CanvasView.renderShape(note, left, top);
+      CanvasView.renderText(note, left, top);
+    },
 
+    renderShape: function(note, left, top) {
+      this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
+      this.ctx.fillRect.apply(this.ctx, [left, top, note.style.width * _transform.scale, note.style.height * _transform.scale]);
+    },
+
+    renderText: function(note, left, top) {
+      this.ctx.fillStyle = "blue";
+      this.ctx.font = 12 * _transform.scale + "px Arial";
+      for(var i = 0; i < note.data.textArr.length; i++) {
+        this.ctx.fillText(" " + note.data.textArr[i], left, top + (12 * (i + 2) - 6) * _transform.scale);
+      }
     },
 
     resizeCanvas: function() {
