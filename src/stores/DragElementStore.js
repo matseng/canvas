@@ -13,9 +13,7 @@ var _getRelativeLeftTop = function() {};
 function _setDragStart(hammerEvent) {
   console.log('_setDragStart');
   _dragStart = {};
-  // var leftTop = _getRelativeLeftTop(hammerEvent);
   var leftTop = {left: hammerEvent.pointers[0].pageX, top: hammerEvent.pointers[0].pageY};
-  var XY;
   var note = NotesStore.getNoteFromXY(leftTop.left, leftTop.top);
   if (note) {
     _dragStart.note = note;
