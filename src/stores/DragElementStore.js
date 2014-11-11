@@ -1,4 +1,75 @@
 "use strict";
 
-var NotesStore = require('NotesStore');
+var assign = require('object-assign');
+var EventEmitter = require('events').EventEmitter;
+var NotesStore = require('./NotesStore');
+var Transform = require('./TransformStore');
+var CanvasAppDispatcher = require('../dispatcher/CanvasAppDispatcher');
 
+var _note;
+var _dragStart;
+
+var _getRelativeLeftTop = function() {};
+
+function _setDragStart(hammerEvent) {
+  console.log('_setDragStart');
+  _dragStart = {};
+  var leftTop = _getRelativeLeftTop(hammerEvent);
+  var XY;
+  var note = NotesStore.getNoteFromXY(leftTop.left, leftTop.top);
+  if (note) {
+    _dragStart.note = note;
+    _dragStart.touchLeft = leftTop.left;
+    _dragStart.touchTop = leftTop.top;
+    _dragStart.elementX = note.data.x;
+    _dragStart.elementY = note.data.y;
+  } else {
+    _dragStart = null;
+  }
+};
+
+function _drag(hammerEvent) {
+  if ( _dragStart ) {
+    _note = _dragStart.note;
+    var leftTop = _getRelativeLeftTop(hammerEvent);
+    var deltaX = (leftTop.left - _dragStart.touchLeft) / Transform.getScale();
+    var deltaY = (leftTop.top - _dragStart.touchTop) / Transform.getScale();
+    _note.data.x = _dragStart.elementX + deltaX;
+    _note.data.y = _dragStart.elementY + deltaY;
+    DragElementStore.emitChange('dragged');
+  }
+}
+
+var DragElementStore = assign({}, EventEmitter.prototype, {
+  
+  get: function() {
+    return _note;
+  },
+
+  emitChange: function(changeEvent) {
+    this.emit(changeEvent);
+  },
+
+  addChangeListener: function(changeEvent, callback) {
+    this.on(changeEvent, callback);
+  },
+
+});
+
+DragElementStore.dispatchToken = CanvasAppDispatcher.register(function(payload) {  
+  switch (payload.actionType) {
+  
+    case 'press':
+      _getRelativeLeftTop = payload.utils._getRelativeLeftTop;
+      _setDragStart(payload.hammerEvent);
+      break;
+
+    case 'pan':
+      _drag(payload.hammerEvent);
+      break;
+    
+    default: // intentionally left blank
+  }
+});
+
+module.exports = DragElementStore;

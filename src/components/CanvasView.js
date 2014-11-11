@@ -3,18 +3,18 @@
 //require NotesStore, NaviationStore, CanvasAppDispatcher
 var CanvasAppDispatcher = require('../dispatcher/CanvasAppDispatcher');
 var NotesStore = require('../stores/NotesStore');
+var DragElementStore = require('../stores/DragElementStore');
 var Hammer = require('hammerjs');
 var TransformStore = require('../stores/TransformStore');
 var _getRelativeLeftTop = require('../utils/GetRelativeLeftTop.js');
 
 var _transform;
 var _notes;
-var _mostRecentNote;
+var _note;  // most recently added or updated note
 
 function _updateStateFromStore() {
   _transform = TransformStore.get();
   _notes = NotesStore.getAll();
-  _mostRecentNote = NotesStore.getMostRecent();  
 };
 
 var CanvasView = {
@@ -49,10 +49,12 @@ var CanvasView = {
     addChangeListeners: function() {
       NotesStore.addChangeListener('added', function() {
         _updateStateFromStore();
+        _note = NotesStore.getMostRecent();  
         CanvasView.renderNote();
       });
-      NotesStore.addChangeListener('dragged', function() {
+      DragElementStore.addChangeListener('dragged', function() {
         _updateStateFromStore();
+        _note = DragElementStore.get();  
         CanvasView.render();
       });
     },
@@ -65,7 +67,7 @@ var CanvasView = {
     },
 
     renderNote: function(note) {
-      note = note || _mostRecentNote;
+      note = note || _note;
       var left = note.data.x * _transform.scale;
       var top = note.data.y * _transform.scale;
       CanvasView.renderShape(note, left, top);
