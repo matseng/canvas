@@ -43,6 +43,7 @@ function _translate(hammerEvent) {
 };
 
 function _zoomStart(hammerEvent) {
+  _translateStartData = {}
   _pinchStart = {};
   _pinchStart.dist = _distHammerPinchEvent(hammerEvent);
   _pinchStart.center = hammerEvent.center;
