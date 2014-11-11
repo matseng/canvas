@@ -23,7 +23,7 @@ function _setDragStart(hammerEvent) {
     _dragStart.elementX = note.data.x;
     _dragStart.elementY = note.data.y;
   } else {
-    _dragStart = null;
+    _reset();
   }
 };
 
@@ -39,6 +39,10 @@ function _drag(hammerEvent) {
     DragElementStore.emitChange('dragged');
   }
 };
+
+function _reset() {
+  _dragStart = null;
+}
 
 var DragElementStore = assign({}, EventEmitter.prototype, {
   
@@ -67,7 +71,11 @@ DragElementStore.dispatchToken = CanvasAppDispatcher.register(function(payload) 
     case 'pan':
       _drag(payload.hammerEvent);
       break;
-    
+
+    case 'pressTwoFingers':
+      _reset();
+      break;
+      
     default: // intentionally left blank
   }
 });

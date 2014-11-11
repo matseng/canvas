@@ -10,7 +10,7 @@ var CHANGE_EVENT = 'change';
 
 var _translateStartData;
 
-var _pinchStart = {};
+var _pinchStart;
 
 var _transform = {
   translateX: 0,
@@ -20,6 +20,7 @@ var _transform = {
 
 function _translateStart(hammerEvent) {
   _reset();
+  _translateStartData = {};
   var leftTop = {left: hammerEvent.pointers[0].pageX, top: hammerEvent.pointers[0].pageY};
   var globalPoint = Transform.windowToGlobalPoint(leftTop);
   var note = NotesStore.getNoteFromXY(globalPoint.x, globalPoint.y);
@@ -44,13 +45,14 @@ function _translate(hammerEvent) {
 
 function _reset() {
   _translateStartData = null;
-  _pinchStartData = null;
+  _pinchStart = null;
 }
 
 function _zoomStart(hammerEvent) {
   _reset();
+  _pinchStart = {};
   _pinchStart.dist = _distHammerPinchEvent(hammerEvent);
-  _pinchStart.center = hammerEvent.center;
+  _pinchStart.center = {x: hammerEvent.center.x, y:hammerEvent.center.y};
   _pinchStart.translateX = _transform.translateX;
   _pinchStart.translateY = _transform.translateY;
   _pinchStart.scale = _transform.scale;
@@ -58,6 +60,8 @@ function _zoomStart(hammerEvent) {
 };
 
 function _mousewheelStart(event) {
+  _reset();
+  _pinchStart = {};
   _pinchStart.translateX = _transform.translateX;
   _pinchStart.translateY = _transform.translateY;
   _pinchStart.scale = _transform.scale;
@@ -69,14 +73,15 @@ function _zoom(hammerEvent, eventName) {
     _mousewheelStart(hammerEvent);
     _transform.scale = (hammerEvent.wheelDeltaY < 0) ? _transform.scale * 1.1 : _transform.scale * 0.90;
   } else {
-    if ( _pinchStart ) {
-      var newPinchDist = _distHammerPinchEvent(hammerEvent);
-      var newScale = _pinchStart.scale * newPinchDist / _pinchStart.dist;
-      _transform.scale = newScale;
-    }
+    var newPinchDist = _distHammerPinchEvent(hammerEvent);
+    var newScale = _pinchStart.scale * newPinchDist / _pinchStart.dist;
+    _transform.scale = newScale;
   }
-  _transform.translateX = _pinchStart.translateX - _getTranslateDelta(_pinchStart.center.x, _pinchStart.scale, _transform.scale);
-  _transform.translateY = _pinchStart.translateY - _getTranslateDelta(_pinchStart.center.y, _pinchStart.scale, _transform.scale);
+  if ( _pinchStart ) {
+    _transform.translateX = _pinchStart.translateX - _getTranslateDelta(_pinchStart.center.x, _pinchStart.scale, _transform.scale);
+    _transform.translateY = _pinchStart.translateY - _getTranslateDelta(_pinchStart.center.y, _pinchStart.scale, _transform.scale);
+    console.log(_transform);
+  }
 };
 
 function _getTranslateDelta(x, scalePrev, scaleNew) {
