@@ -4,17 +4,14 @@
 var CanvasAppDispatcher = require('../dispatcher/CanvasAppDispatcher');
 var NotesStore = require('../stores/NotesStore');
 var Hammer = require('hammerjs');
+var TransformStore = require('../stores/TransformStore');
 
-var _transform = {
-  translateX: 0,
-  translateY: 0,
-  scale: 1
-};
+var _transform;
 var _notes;
 var _mostRecentNote;
 
 function _updateStateFromStore() {
-  // _transform = TransformStore.get();  //SAVE for later
+  _transform = TransformStore.get();
   _notes = NotesStore.getAll();
   _mostRecentNote = NotesStore.getMostRecent();  
 };

@@ -8,6 +8,7 @@ var CHANGE_EVENT = 'change';
 
 var _notes = {};
 var _mostRecentNote = {};
+var _drag = {};
 
 function _addNote(note) {
   var key = Object.keys(note)[0];
@@ -19,6 +20,12 @@ function _setMostRecentNote(note, key) {
   var keyOld = Object.keys(_mostRecentNote)[0];
   delete _mostRecentNote[keyOld];
   assign(_mostRecentNote, note[key]);
+};
+
+function _setDragStart(hammerEvent) {
+  //get touch coordinate
+  //determine what note was clicked note clicked
+  //move that note
 };
 
 var NotesStore = assign({}, EventEmitter.prototype, {
@@ -49,6 +56,9 @@ NotesStore.dispatchToken = CanvasAppDispatcher.register(function(payload) {
       _addNote(payload.note);
       NotesStore.emitChange();
       break;
+
+    case 'press':
+      _setDragStart(payload.hammerEvent);
 
     default:  // do nothing
   }
