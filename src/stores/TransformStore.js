@@ -80,7 +80,6 @@ function _zoom(hammerEvent, eventName) {
   if ( _pinchStart ) {
     _transform.translateX = _pinchStart.translateX - _getTranslateDelta(_pinchStart.center.x, _pinchStart.scale, _transform.scale);
     _transform.translateY = _pinchStart.translateY - _getTranslateDelta(_pinchStart.center.y, _pinchStart.scale, _transform.scale);
-    console.log(_transform);
   }
 };
 

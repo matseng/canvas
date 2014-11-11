@@ -8,8 +8,6 @@ var CanvasAppDispatcher = require('../dispatcher/CanvasAppDispatcher');
 
 var _dragStart;
 
-var _getRelativeLeftTop = function() {};
-
 function _setDragStart(hammerEvent) {
   _dragStart = {};
   var leftTop = {left: hammerEvent.pointers[0].pageX, top: hammerEvent.pointers[0].pageY};
@@ -75,7 +73,7 @@ DragElementStore.dispatchToken = CanvasAppDispatcher.register(function(payload) 
     case 'pressTwoFingers':
       _reset();
       break;
-      
+
     default: // intentionally left blank
   }
 });

@@ -26,9 +26,16 @@ var CanvasView = {
     load: function() {
       this.resizeCanvas();
       this.addTouchEventListeners();
-      this.addChangeListeners();
-      // _getRelativeLeftTop.set(CanvasView.canvas);
+      this.addStoreListeners();
+      this.addWindowResizeListener();
       this.render();
+    },
+
+    addWindowResizeListener: function() {
+      window.onresize = function() {
+        this.resizeCanvas;
+        this.render();
+      }.bind(this);
     },
 
     addTouchEventListeners: function() {
@@ -54,7 +61,7 @@ var CanvasView = {
       });
     },
 
-    addChangeListeners: function() {
+    addStoreListeners: function() {
       
       NotesStore.addChangeListener('added', function() {
         _updateStateFromStores();
