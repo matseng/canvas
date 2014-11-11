@@ -38,12 +38,18 @@ var CanvasView = {
       this.hammer.add(new Hammer.Press({pointers: 1, time:0}));
       this.hammer.add(new Hammer.Press({event: 'pressTwoFingers', pointers: 2, time:0}));
       this.hammer.add(new Hammer.Pinch());
-
       this.hammer.on('tap press pressTwoFingers pinch pan', function(hammerEvent) {
         CanvasAppDispatcher.dispatch({
           actionType: hammerEvent.type,
           hammerEvent: hammerEvent,
           // utils: {_getRelativeLeftTop: _getRelativeLeftTop.bind(CanvasView.canvas)}
+        });
+      });
+
+      this.canvas.addEventListener('mousewheel', function(event) {
+        CanvasAppDispatcher.dispatch({
+          actionType: 'mousewheel',
+          event: event
         });
       });
     },
