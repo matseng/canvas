@@ -7,7 +7,7 @@ var _getRelativeLeftTop = require('../utils/GetRelativeLeftTop.js');
 
 var CHANGE_EVENT = 'change';
 
-var _pinchPrevious;
+var _pinchStart;
 
 var _transform = {
   translateX: 0,
@@ -16,19 +16,32 @@ var _transform = {
 };
 
 function _zoomStart(hammerEvent) {
-  _pinchPrevious = {};
-  _pinchPrevious.dist = _distHammerPinchEvent(hammerEvent);
-  _pinchPrevious.center = hammerEvent.center;
-  console.log(_pinchPrevious);
+  _pinchStart = {};
+  _pinchStart.dist = _distHammerPinchEvent(hammerEvent);
+  _pinchStart.center = hammerEvent.center;
+  _pinchStart.scale = _transform.scale;
+  console.log(_pinchStart);
 };
 
 function _zoom(hammerEvent) {
+
+  var center = _pinchStart.center;
   var newDist = _distHammerPinchEvent(hammerEvent);
-  var newScale = newDist / _pinchPrevious.dist;
+  var newScale = newDist / _pinchStart.dist;
+
   _transform.scale = newScale;
 
   console.log(_transform.scale); 
+
+  _transform.translateX = _transform.translateX - _getTranslateDelta(center.x, _pinchStart.scale, _transform.scale);
+  _transform.translateY = _transform.translateY - _getTranslateDelta(center.y, _pinchStart.scale, _transform.scale);
 };
+
+function _getTranslateDelta(x, scalePrev, scaleNew) {
+  var translateDelta = (x / scalePrev * scaleNew - x) / scaleNew;
+  return translateDelta;
+}
+
 
 function _distHammerPinchEvent (hammerPinchEvent) {
     return _dist(

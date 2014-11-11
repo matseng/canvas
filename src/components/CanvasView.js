@@ -27,7 +27,7 @@ var CanvasView = {
       this.resizeCanvas();
       this.addTouchEventListeners();
       this.addChangeListeners();
-      _getRelativeLeftTop.set(CanvasView.canvas);
+      // _getRelativeLeftTop.set(CanvasView.canvas);
       this.render();
     },
 
@@ -57,22 +57,25 @@ var CanvasView = {
       });
       
       DragElementStore.addChangeListener('dragged', function() {
-        _updateStateFromStores();
+        // _updateStateFromStores();
         _note = DragElementStore.get();  
         CanvasView.render();
       });
 
       TransformStore.addChangeListener('changed', function() {
-        _updateStateFromStores();
+        // _updateStateFromStores();
         CanvasView.render();
       })
     },
 
     render: function() {
+      _updateStateFromStores();
+      this.ctx.translate(_transform.translateX * _transform.scale, _transform.translateY * _transform.scale);
       this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
       for(var key in _notes) {
         CanvasView.renderNote(_notes[key]);
       }
+      this.ctx.translate(-_transform.translateX * _transform.scale, -_transform.translateY * _transform.scale);
     },
 
     renderNote: function(note) {
@@ -80,7 +83,7 @@ var CanvasView = {
       var left = note.data.x * _transform.scale;
       var top = note.data.y * _transform.scale;
       CanvasView.renderShape(note, left, top);
-      CanvasView.renderText(note, left, top);
+      // CanvasView.renderText(note, left, top);
     },
 
     renderShape: function(note, left, top) {
