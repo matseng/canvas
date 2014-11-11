@@ -51,7 +51,7 @@ function _zoomStart(hammerEvent) {
   console.log(_pinchStart);
 };
 
-function _zoomStart(event) {
+function _mousewheelStart(event) {
   _pinchStart.translateX = _transform.translateX;
   _pinchStart.translateY = _transform.translateY;
   _pinchStart.scale = _transform.scale;
@@ -60,7 +60,7 @@ function _zoomStart(event) {
 
 function _zoom(hammerEvent, eventName) {
   if(hammerEvent.type === 'mousewheel') {
-    _zoomStart(hammerEvent);
+    _mousewheelStart(hammerEvent);
     _transform.scale = (hammerEvent.wheelDeltaY < 0) ? _transform.scale * 1.1 : _transform.scale * 0.90;
   } else {
     var newPinchDist = _distHammerPinchEvent(hammerEvent);
