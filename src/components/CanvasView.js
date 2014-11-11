@@ -27,6 +27,7 @@ var CanvasView = {
       this.resizeCanvas();
       this.addTouchEventListeners();
       this.addChangeListeners();
+      _getRelativeLeftTop.set(CanvasView.canvas);
       this.render();
     },
 
@@ -35,13 +36,14 @@ var CanvasView = {
       this.hammer.add(new Hammer.Tap());
       this.hammer.add(new Hammer.Pan({threshold:0}));
       this.hammer.add(new Hammer.Press({pointers: 1, time:0}));
+      this.hammer.add(new Hammer.Press({event: 'pressTwoFingers', pointers: 2, time:0}));
       this.hammer.add(new Hammer.Pinch());
 
-      this.hammer.on('tap press pinch pan', function(hammerEvent) {
+      this.hammer.on('tap press pressTwoFingers pinch pan', function(hammerEvent) {
         CanvasAppDispatcher.dispatch({
           actionType: hammerEvent.type,
           hammerEvent: hammerEvent,
-          utils: {_getRelativeLeftTop: _getRelativeLeftTop.bind(CanvasView.canvas)}
+          // utils: {_getRelativeLeftTop: _getRelativeLeftTop.bind(CanvasView.canvas)}
         });
       });
     },

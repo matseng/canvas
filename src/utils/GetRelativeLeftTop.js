@@ -1,13 +1,16 @@
-HTMLCanvasElement.prototype.getRelativeLeftTop = function (event) {
+
+var _canvasElement;
+
+var getRelativeLeftTop = function (event) {
   var totalOffsetX = 0;
   var totalOffsetY = 0;
   var canvasX = 0;
   var canvasY = 0;
-  var currentElement = this;
+  var currentElement = _canvasElement;
 
   do {
-      totalOffsetX += currentElement.offsetLeft;
-      totalOffsetY += currentElement.offsetTop;
+      totalOffsetX += _canvasElement.offsetLeft;
+      totalOffsetY += _canvasElement.offsetTop;
   }
   while (currentElement = currentElement.offsetParent)
 
@@ -18,10 +21,14 @@ HTMLCanvasElement.prototype.getRelativeLeftTop = function (event) {
   canvasY = pageY - totalOffsetY;
 
   // Fix for variable canvas width
-  canvasX = Math.round( canvasX * (this.width / this.offsetWidth) );
-  canvasY = Math.round( canvasY * (this.height / this.offsetHeight) );
+  canvasX = Math.round( canvasX * (_canvasElement.width / _canvasElement.offsetWidth) );
+  canvasY = Math.round( canvasY * (_canvasElement.height / _canvasElement.offsetHeight) );
 
   return {left:canvasX, top:canvasY};
 };
 
-module.exports = HTMLCanvasElement.prototype.getRelativeLeftTop;
+getRelativeLeftTop.set = function(canvasElement) {
+  _canvasElement = canvasElement;
+}
+
+module.exports = getRelativeLeftTop;
