@@ -6,7 +6,6 @@ var NotesStore = require('./NotesStore');
 var Transform = require('./TransformStore');
 var CanvasAppDispatcher = require('../dispatcher/CanvasAppDispatcher');
 
-var _note;
 var _dragStart;
 
 var _getRelativeLeftTop = function() {};
@@ -30,20 +29,20 @@ function _setDragStart(hammerEvent) {
 
 function _drag(hammerEvent) {
   if ( _dragStart ) {
-    _note = _dragStart.note;
+    var note = _dragStart.note;
     var leftTop = _getRelativeLeftTop(hammerEvent);
     var deltaX = (leftTop.left - _dragStart.touchLeft) / Transform.getScale();
     var deltaY = (leftTop.top - _dragStart.touchTop) / Transform.getScale();
-    _note.data.x = _dragStart.elementX + deltaX;
-    _note.data.y = _dragStart.elementY + deltaY;
+    note.data.x = _dragStart.elementX + deltaX;
+    note.data.y = _dragStart.elementY + deltaY;
     DragElementStore.emitChange('dragged');
   }
-}
+};
 
 var DragElementStore = assign({}, EventEmitter.prototype, {
   
   get: function() {
-    return _note;
+    return _dragStart.note;
   },
 
   emitChange: function(changeEvent) {
