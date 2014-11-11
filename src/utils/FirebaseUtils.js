@@ -5,6 +5,7 @@ var CanvasAppDispatcher = require('../dispatcher/CanvasAppDispatcher');
 module.exports = {
   init: function() {
     this.loadExample();
+    this.get();
   },
 
   loadExample: function() {
@@ -54,12 +55,15 @@ module.exports = {
   get: function() {
     var ref = new Firebase('https://brainspace-biz.firebaseio.com/');
     var notesRef = ref.child('notes2');
-    notesRef.on("child_added", function(snapshot) {
+    notesRef.on("child_added", function(snapshot, key) {
+      var note_ = {};
       var note = snapshot.val();
       note.data.textArr = note.data.text.split('\n');
-      // this.notes.push(note);
-      // this.add( new Rect(note.data.x, note.data.y, note.style.width, note.style.height));
+      note_[key] = note;
+      CanvasAppDispatcher.dispatch({
+        actionType: 'note_added',
+        note: note_,
+      });
     }.bind(this));
-
   },
 }

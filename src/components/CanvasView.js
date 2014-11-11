@@ -87,7 +87,7 @@ var CanvasView = {
       var left = note.data.x * _transform.scale;
       var top = note.data.y * _transform.scale;
       CanvasView.renderShape(note, left, top);
-      // CanvasView.renderText(note, left, top);
+      CanvasView.renderText(note, left, top);
     },
 
     renderShape: function(note, left, top) {
@@ -99,7 +99,9 @@ var CanvasView = {
       this.ctx.fillStyle = "blue";
       this.ctx.font = 12 * _transform.scale + "px Arial";
       for(var i = 0; i < note.data.textArr.length; i++) {
+        // this.ctx.fillText(" " + note.data.textArr[i], left, top + (12 * (i + 2) - 6) );
         this.ctx.fillText(" " + note.data.textArr[i], left, top + (12 * (i + 2) - 6) * _transform.scale);
+
       }
     },
 
