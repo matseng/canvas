@@ -35,10 +35,10 @@ var CanvasView = {
       this.hammer = new Hammer.Manager(this.canvas);
       this.hammer.add(new Hammer.Tap());
       this.hammer.add(new Hammer.Pan({threshold:0}));
-      this.hammer.add(new Hammer.Press({pointers: 1, time:0}));
+      this.hammer.add(new Hammer.Press({event: 'pressOneFinger', pointers: 1, time:0}));
       this.hammer.add(new Hammer.Press({event: 'pressTwoFingers', pointers: 2, time:0}));
       this.hammer.add(new Hammer.Pinch());
-      this.hammer.on('tap press pressTwoFingers pinch pan', function(hammerEvent) {
+      this.hammer.on('tap pressOneFinger pressTwoFingers pinch pan', function(hammerEvent) {
         CanvasAppDispatcher.dispatch({
           actionType: hammerEvent.type,
           hammerEvent: hammerEvent,

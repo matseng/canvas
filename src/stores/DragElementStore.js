@@ -58,7 +58,7 @@ var DragElementStore = assign({}, EventEmitter.prototype, {
 DragElementStore.dispatchToken = CanvasAppDispatcher.register(function(payload) {  
   switch (payload.actionType) {
   
-    case 'press':
+    case 'pressOneFinger':
       // _getRelativeLeftTop = payload.utils._getRelativeLeftTop;
       _setDragStart(payload.hammerEvent);
       break;

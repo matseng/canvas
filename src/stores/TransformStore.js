@@ -110,7 +110,7 @@ var Transform = _assign({}, EventEmitter.prototype, {
 Transform.dispatchToken = CanvasAppDispatcher.register(function(payload) {
   switch(payload.actionType) {
     
-    case 'press':
+    case 'pressOneFinger':
       // _getRelativeLeftTop = payload.utils._getRelativeLeftTop;
       _translateStart(payload.hammerEvent);
       break;
