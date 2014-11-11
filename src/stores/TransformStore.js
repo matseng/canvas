@@ -26,6 +26,7 @@ function _zoom(hammerEvent) {
   var newDist = _distHammerPinchEvent(hammerEvent);
   var newScale = newDist / _pinchPrevious.dist;
   _transform.scale = newScale;
+
   console.log(_transform.scale); 
 };
 
@@ -49,6 +50,15 @@ var Transform = _assign({}, EventEmitter.prototype, {
   getScale: function() {
     return _transform.scale;
   },
+
+  emitChange: function(changeEventName) {
+    this.emit(changeEventName || 'changed');
+  },
+
+  addChangeListener: function(changeEvent, callback) {
+    this.on(changeEvent, callback);
+  },
+
 });
 
 Transform.dispatchToken = CanvasAppDispatcher.register(function(payload) {
@@ -60,6 +70,7 @@ Transform.dispatchToken = CanvasAppDispatcher.register(function(payload) {
     
     case 'pinch':
       _zoom(payload.hammerEvent)
+      Transform.emitChange('changed')
       break;
     
     default:

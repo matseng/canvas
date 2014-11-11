@@ -13,7 +13,8 @@ var _getRelativeLeftTop = function() {};
 function _setDragStart(hammerEvent) {
   console.log('_setDragStart');
   _dragStart = {};
-  var leftTop = _getRelativeLeftTop(hammerEvent);
+  // var leftTop = _getRelativeLeftTop(hammerEvent);
+  var leftTop = {left: hammerEvent.pointers[0].pageX, top: hammerEvent.pointers[0].pageY};
   var XY;
   var note = NotesStore.getNoteFromXY(leftTop.left, leftTop.top);
   if (note) {
@@ -30,7 +31,8 @@ function _setDragStart(hammerEvent) {
 function _drag(hammerEvent) {
   if ( _dragStart ) {
     var note = _dragStart.note;
-    var leftTop = _getRelativeLeftTop(hammerEvent);
+    // var leftTop = _getRelativeLeftTop(hammerEvent);
+    var leftTop = {left: hammerEvent.pointers[0].pageX, top: hammerEvent.pointers[0].pageY};
     var deltaX = (leftTop.left - _dragStart.touchLeft) / Transform.getScale();
     var deltaY = (leftTop.top - _dragStart.touchTop) / Transform.getScale();
     note.data.x = _dragStart.elementX + deltaX;
@@ -59,7 +61,7 @@ DragElementStore.dispatchToken = CanvasAppDispatcher.register(function(payload) 
   switch (payload.actionType) {
   
     case 'press':
-      _getRelativeLeftTop = payload.utils._getRelativeLeftTop;
+      // _getRelativeLeftTop = payload.utils._getRelativeLeftTop;
       _setDragStart(payload.hammerEvent);
       break;
 

@@ -12,7 +12,7 @@ var _transform;
 var _notes;
 var _note;  // most recently added or updated note
 
-function _updateStateFromStore() {
+function _updateStateFromStores() {
   _transform = TransformStore.get();
   _notes = NotesStore.getAll();
 };
@@ -49,16 +49,23 @@ var CanvasView = {
     },
 
     addChangeListeners: function() {
+      
       NotesStore.addChangeListener('added', function() {
-        _updateStateFromStore();
+        _updateStateFromStores();
         _note = NotesStore.getMostRecent();  
         CanvasView.renderNote();
       });
+      
       DragElementStore.addChangeListener('dragged', function() {
-        _updateStateFromStore();
+        _updateStateFromStores();
         _note = DragElementStore.get();  
         CanvasView.render();
       });
+
+      TransformStore.addChangeListener('changed', function() {
+        _updateStateFromStores();
+        CanvasView.render();
+      })
     },
 
     render: function() {
