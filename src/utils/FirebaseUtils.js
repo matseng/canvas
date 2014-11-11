@@ -10,10 +10,10 @@ module.exports = {
   loadExample: function() {
     var testNote = {
       "data" : {
-        "text" : "#myHashtag3",
-        "y" : 250,
-        "x" : 250,
-        "hashtags" : [ "#myHashtag3" ]
+        "text" : "#myHashtag0",
+        "y" : 10,
+        "x" : 10,
+        "hashtags" : [ "#myHashtag0" ]
       },
       "style" : {
         "top" : 229.86368368933097,
@@ -27,6 +27,27 @@ module.exports = {
     CanvasAppDispatcher.dispatch({
       actionType: 'note_added',
       note: {testNoteKey: testNote}
+    });
+
+    var testNote2 = {
+      "data" : {
+        "text" : "#myHashtag1",
+        "y" : 250,
+        "x" : 250,
+        "hashtags" : [ "#myHashtag1" ]
+      },
+      "style" : {
+        "top" : 229.86368368933097,
+        "height" : 50,
+        "left" : 101.75178984370329,
+        "width" : 192,
+        "font-size" : "10pt"
+      }
+    };
+    testNote2.data.textArr = testNote2.data.text.split("\n");
+    CanvasAppDispatcher.dispatch({
+      actionType: 'note_added',
+      note: {testNoteKey1: testNote2}
     });
   },
 

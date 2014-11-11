@@ -19,11 +19,12 @@ var _transform = {
 };
 
 function _translateStart(hammerEvent) {
-  console.log('_translateStart');
   _translateStartData = {};
   var leftTop = {left: hammerEvent.pointers[0].pageX, top: hammerEvent.pointers[0].pageY};
-  var note = NotesStore.getNoteFromXY(leftTop.left, leftTop.top);
+  var globalPoint = Transform.windowToGlobalPoint(leftTop);
+  var note = NotesStore.getNoteFromXY(globalPoint.x, globalPoint.y);
   if ( !note) {
+    console.log('_translateStart');
     _translateStartData.left = leftTop.left;
     _translateStartData.top = leftTop.top;
     _translateStartData.translateX = _transform.translateX;
@@ -103,6 +104,13 @@ var Transform = _assign({}, EventEmitter.prototype, {
 
   addChangeListener: function(changeEvent, callback) {
     this.on(changeEvent, callback);
+  },
+
+  windowToGlobalPoint: function(windowPoint) {
+    return {
+      x: windowPoint.left / _transform.scale - _transform.translateX,
+      y: windowPoint.top / _transform.scale - _transform.translateY
+    };
   },
 
 });

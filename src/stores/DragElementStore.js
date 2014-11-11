@@ -11,11 +11,12 @@ var _dragStart;
 var _getRelativeLeftTop = function() {};
 
 function _setDragStart(hammerEvent) {
-  console.log('_setDragStart');
   _dragStart = {};
   var leftTop = {left: hammerEvent.pointers[0].pageX, top: hammerEvent.pointers[0].pageY};
-  var note = NotesStore.getNoteFromXY(leftTop.left, leftTop.top);
+  var globalPoint = Transform.windowToGlobalPoint(leftTop);
+  var note = NotesStore.getNoteFromXY(globalPoint.x, globalPoint.y);
   if (note) {
+    console.log('_setDragStart');
     _dragStart.note = note;
     _dragStart.touchLeft = leftTop.left;
     _dragStart.touchTop = leftTop.top;
