@@ -19,7 +19,7 @@ var _transform = {
 };
 
 function _translateStart(hammerEvent) {
-  _translateStartData = {};
+  _reset();
   var leftTop = {left: hammerEvent.pointers[0].pageX, top: hammerEvent.pointers[0].pageY};
   var globalPoint = Transform.windowToGlobalPoint(leftTop);
   var note = NotesStore.getNoteFromXY(globalPoint.x, globalPoint.y);
@@ -42,9 +42,13 @@ function _translate(hammerEvent) {
   }
 };
 
+function _reset() {
+  _translateStartData = null;
+  _pinchStartData = null;
+}
+
 function _zoomStart(hammerEvent) {
-  _translateStartData = {}
-  _pinchStart = {};
+  _reset();
   _pinchStart.dist = _distHammerPinchEvent(hammerEvent);
   _pinchStart.center = hammerEvent.center;
   _pinchStart.translateX = _transform.translateX;
@@ -65,9 +69,11 @@ function _zoom(hammerEvent, eventName) {
     _mousewheelStart(hammerEvent);
     _transform.scale = (hammerEvent.wheelDeltaY < 0) ? _transform.scale * 1.1 : _transform.scale * 0.90;
   } else {
-    var newPinchDist = _distHammerPinchEvent(hammerEvent);
-    var newScale = _pinchStart.scale * newPinchDist / _pinchStart.dist;
-    _transform.scale = newScale;
+    if ( _pinchStart ) {
+      var newPinchDist = _distHammerPinchEvent(hammerEvent);
+      var newScale = _pinchStart.scale * newPinchDist / _pinchStart.dist;
+      _transform.scale = newScale;
+    }
   }
   _transform.translateX = _pinchStart.translateX - _getTranslateDelta(_pinchStart.center.x, _pinchStart.scale, _transform.scale);
   _transform.translateY = _pinchStart.translateY - _getTranslateDelta(_pinchStart.center.y, _pinchStart.scale, _transform.scale);
