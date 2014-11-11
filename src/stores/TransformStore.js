@@ -18,7 +18,6 @@ var _transform = {
   scale: 1
 };
 
-
 function _translateStart(hammerEvent) {
   console.log('_translateStart');
   _translateStartData = {};
@@ -46,22 +45,24 @@ function _zoomStart(hammerEvent) {
   _pinchStart = {};
   _pinchStart.dist = _distHammerPinchEvent(hammerEvent);
   _pinchStart.center = hammerEvent.center;
+  _pinchStart.translateX = _transform.translateX;
+  _pinchStart.translateY = _transform.translateY;
   _pinchStart.scale = _transform.scale;
   console.log(_pinchStart);
 };
 
 function _zoom(hammerEvent) {
 
-  var center = _pinchStart.center;
+  // var center = _pinchStart.center;
   var newDist = _distHammerPinchEvent(hammerEvent);
-  var newScale = newDist / _pinchStart.dist;
+  var newScale = _pinchStart.scale * newDist / _pinchStart.dist;
 
   _transform.scale = newScale;
 
   console.log(_transform.scale); 
 
-  _transform.translateX = _transform.translateX - _getTranslateDelta(center.x, _pinchStart.scale, _transform.scale);
-  _transform.translateY = _transform.translateY - _getTranslateDelta(center.y, _pinchStart.scale, _transform.scale);
+  _transform.translateX = _pinchStart.translateX - _getTranslateDelta(_pinchStart.center.x, _pinchStart.scale, _transform.scale);
+  _transform.translateY = _pinchStart.translateY - _getTranslateDelta(_pinchStart.center.y, _pinchStart.scale, _transform.scale);
 };
 
 function _getTranslateDelta(x, scalePrev, scaleNew) {

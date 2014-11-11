@@ -57,21 +57,19 @@ var CanvasView = {
       });
       
       DragElementStore.addChangeListener('dragged', function() {
-        // _updateStateFromStores();
         _note = DragElementStore.get();  
         CanvasView.render();
       });
 
       TransformStore.addChangeListener('changed', function() {
-        // _updateStateFromStores();
         CanvasView.render();
       })
     },
 
     render: function() {
       _updateStateFromStores();
-      this.ctx.translate(_transform.translateX * _transform.scale, _transform.translateY * _transform.scale);
       this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
+      this.ctx.translate(_transform.translateX * _transform.scale, _transform.translateY * _transform.scale);
       for(var key in _notes) {
         CanvasView.renderNote(_notes[key]);
       }
