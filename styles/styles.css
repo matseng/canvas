@@ -19,6 +19,7 @@ body {
 }
 
 #canvas {
+  display: block;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   border: 0px black solid;
@@ -28,4 +29,47 @@ body {
   position: absolute;
   font-size: 10px;
   /*display: none;*/
+}
+
+.menu-top {
+  position: fixed;
+  top: 0;
+  width:100%;
+  margin:0;
+}
+
+.menu-top > .btn-group {
+  width: 100%;
+  float: none;
+}
+
+.menu-top > .btn-group > .left {
+  position: relative;
+  margin-left: 2%;
+}
+
+.menu-top > .btn-group > .right {
+  position: relative;
+  margin-right: 2%;
+}
+
+.menu-bottom {
+  position: fixed;
+  bottom: 0;
+  width:100%;
+  margin:0;
+}
+
+.btn-toolbar {
+  background-color: #428bca;
+}
+
+.menu-bottom > .btn-group {
+  float: none;
+}
+
+.btn {
+  border: 0;
+  border-radius: 0;
+  height: 100%;
 }

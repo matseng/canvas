@@ -15,7 +15,9 @@
   ],
   "dependencies": {
     "firebase": "~2.0.2",
-    "angularfire": "~0.8.2"
+    "angularfire": "~0.8.2",
+    "bootstrap": "~3.3.0",
+    "ionicons": "~1.5.2"
   },
   "devDependencies": {
     "hammer-touchemulator": "~0.0.2"
