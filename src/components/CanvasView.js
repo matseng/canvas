@@ -1,6 +1,7 @@
 "use strict";
 
-//require NotesStore, NaviationStore, CanvasAppDispatcher
+var EditTextView = require('./EditTextView');
+
 var CanvasAppDispatcher = require('../dispatcher/CanvasAppDispatcher');
 var NotesStore = require('../stores/NotesStore');
 var DragElementStore = require('../stores/DragElementStore');
@@ -46,12 +47,27 @@ var CanvasView = {
       this.hammer.add(new Hammer.Press({event: 'pressOneFinger', pointers: 1, time:0}));
       this.hammer.add(new Hammer.Press({event: 'pressTwoFingers', pointers: 2, time:0}));
       this.hammer.add(new Hammer.Pinch());
-      this.hammer.on('tap pressOneFinger pressTwoFingers pinch pan', function(hammerEvent) {
+      this.hammer.on('pressOneFinger pressTwoFingers pinch pan', function(hammerEvent) {
         CanvasAppDispatcher.dispatch({
           actionType: hammerEvent.type,
           hammerEvent: hammerEvent,
           // utils: {_getRelativeLeftTop: _getRelativeLeftTop.bind(CanvasView.canvas)}
         });
+      });
+
+      this.hammer.on('tap', function(hammerEvent) {
+        console.log(hammerEvent.tapCount);
+        if(hammerEvent.tapCount === 1) {
+          CanvasAppDispatcher.dispatch({
+            actionType: 'tapSingle',
+            hammerEvent: hammerEvent
+          });
+        } else if(hammerEvent.tapCount === 2) {
+          CanvasAppDispatcher.dispatch({
+            actionType: 'tapDouble',
+            hammerEvent: hammerEvent
+          });
+        }
       });
 
       this.canvas.addEventListener('mousewheel', function(event) {
@@ -86,8 +102,6 @@ var CanvasView = {
       for(var key in _notes) {
         CanvasView.renderNote(_notes[key]);
       }
-      // debugger
-      // this.ctx.translate(-_transform.translateX * _transform.scale, -_transform.translateY * _transform.scale);
     },
 
     setCanvasTranslation: function() {
@@ -95,17 +109,6 @@ var CanvasView = {
       this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
       this.ctx.translate(_transform.translateX * _transform.scale, _transform.translateY * _transform.scale);
       _transformPrevious = {translateX: _transform.translateX, translateY: _transform.translateY, scale: _transform.scale};
-    },
-
-    render_NEW: function() {
-      _updateStateFromStores();
-      this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
-      this.ctx.translate(_transform.translateX * _transform.scale, _transform.translateY * _transform.scale);
-      for(var key in _notes) {
-        setTimeout(this.renderNote.bind(this, _note[key]), 0);
-        //check for new touch event, then re-render if neccessary, else continue
-      }
-      this.ctx.translate(-_transform.translateX * _transform.scale, -_transform.translateY * _transform.scale);
     },
 
     renderNote: function(note) {
@@ -127,7 +130,6 @@ var CanvasView = {
       for(var i = 0; i < note.data.textArr.length; i++) {
         // this.ctx.fillText(" " + note.data.textArr[i], left, top + (12 * (i + 2) - 6) );
         this.ctx.fillText(" " + note.data.textArr[i], left, top + (12 * (i + 2) - 6) * _transform.scale);
-
       }
     },
 
