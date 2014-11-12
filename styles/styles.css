@@ -41,11 +41,18 @@ body {
 .menu-top > .btn-group {
   width: 100%;
   float: none;
+  text-align: center;
 }
 
 .menu-top > .btn-group > .left {
   position: relative;
   margin-left: 2%;
+}
+
+.menu-top > .btn-group > .center {
+  float: center;
+  position: relative;
+  top: 3px;
 }
 
 .menu-top > .btn-group > .right {
