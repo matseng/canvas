@@ -9,6 +9,7 @@ var TransformStore = require('../stores/TransformStore');
 var _getRelativeLeftTop = require('../utils/GetRelativeLeftTop.js');
 
 var _transform;
+var _transformPrevious = {translateX: 0, translateY:0, scale: 1};
 var _notes;
 var _note;  // most recently added or updated note
 
@@ -81,10 +82,28 @@ var CanvasView = {
 
     render: function() {
       _updateStateFromStores();
+      this.setCanvasTranslation();
+      for(var key in _notes) {
+        CanvasView.renderNote(_notes[key]);
+      }
+      // debugger
+      // this.ctx.translate(-_transform.translateX * _transform.scale, -_transform.translateY * _transform.scale);
+    },
+
+    setCanvasTranslation: function() {
+      this.ctx.translate(-_transformPrevious.translateX * _transformPrevious.scale, -_transformPrevious.translateY * _transformPrevious.scale);
+      this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
+      this.ctx.translate(_transform.translateX * _transform.scale, _transform.translateY * _transform.scale);
+      _transformPrevious = {translateX: _transform.translateX, translateY: _transform.translateY, scale: _transform.scale};
+    },
+
+    render_NEW: function() {
+      _updateStateFromStores();
       this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
       this.ctx.translate(_transform.translateX * _transform.scale, _transform.translateY * _transform.scale);
       for(var key in _notes) {
-        CanvasView.renderNote(_notes[key]);
+        setTimeout(this.renderNote.bind(this, _note[key]), 0);
+        //check for new touch event, then re-render if neccessary, else continue
       }
       this.ctx.translate(-_transform.translateX * _transform.scale, -_transform.translateY * _transform.scale);
     },
