@@ -35,16 +35,15 @@ var FocusStore = _assign({}, EventEmitter.prototype, {
   },
 
   getFocusSingleTap: function() {
-    return _transform;
+    return _focusSingleTap;
   },
 
   getFocusDoubleTap: function() {
-    return _transform;
+    return _focusDoubleTap;
   },
 });
 
 FocusStore.dispatchToken = CanvasAppDispatcher.register(function(payload) {  
-  console.log(payload.actionType);
   switch (payload.actionType) {
   
     case 'tapSingle':
@@ -58,3 +57,5 @@ FocusStore.dispatchToken = CanvasAppDispatcher.register(function(payload) {
     default: // intentionally left blank
   }
 });
+
+module.exports = FocusStore;

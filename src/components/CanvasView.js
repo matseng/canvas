@@ -1,6 +1,5 @@
 "use strict";
 
-var FocusView = require('./FocusView');
 
 var CanvasAppDispatcher = require('../dispatcher/CanvasAppDispatcher');
 var NotesStore = require('../stores/NotesStore');
@@ -8,6 +7,8 @@ var DragElementStore = require('../stores/DragElementStore');
 var Hammer = require('hammerjs');
 var TransformStore = require('../stores/TransformStore');
 var _getRelativeLeftTop = require('../utils/GetRelativeLeftTop.js');
+
+var FocusView = require('./FocusView');
 
 var _transform;
 var _transformPrevious = {translateX: 0, translateY:0, scale: 1};
@@ -31,6 +32,7 @@ var CanvasView = {
       this.addStoreListeners();
       this.addWindowResizeListener();
       this.render();
+      FocusView.init();
     },
 
     addWindowResizeListener: function() {
@@ -56,7 +58,6 @@ var CanvasView = {
       });
 
       this.hammer.on('tap', function(hammerEvent) {
-        console.log(hammerEvent.tapCount);
         if(hammerEvent.tapCount === 1) {
           CanvasAppDispatcher.dispatch({
             actionType: 'tapSingle',
