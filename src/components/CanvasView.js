@@ -1,6 +1,6 @@
 "use strict";
 
-var EditTextView = require('./EditTextView');
+var FocusView = require('./FocusView');
 
 var CanvasAppDispatcher = require('../dispatcher/CanvasAppDispatcher');
 var NotesStore = require('../stores/NotesStore');

@@ -18,12 +18,22 @@ function _tapSingleHandler() {
 function _tapDoubleHandler(hammerEvent) {
   // console.log('single');
   var note = _getEventTarget(hammerEvent);
-  console.log(note.data.text);
-
+  if (note && note !== _focusDoubleTap) {
+    _focusDoubleTap = note;
+    FocusStore.emitChange('changed');
+  }
 };
 
 var FocusStore = _assign({}, EventEmitter.prototype, {
   
+  emitChange: function(changeEventName) {
+    this.emit(changeEventName || 'changed');
+  },
+
+  addChangeListener: function(changeEvent, callback) {
+    this.on(changeEvent, callback);
+  },
+
   getFocusSingleTap: function() {
     return _transform;
   },
