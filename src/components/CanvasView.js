@@ -108,7 +108,7 @@ var CanvasView = {
           CanvasView.renderNote(_notes[key]);
         }
         if (window.performance) _timer.average = (_timer.average * _timer.count + window.performance.now() - _timer.start) / (++_timer.count);
-        console.log("average render duration: ", _timer.average);
+        console.log("Average render duration: ", _timer.average);
       }.bind(this));
     },
 
