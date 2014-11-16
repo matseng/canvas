@@ -100,14 +100,16 @@ var CanvasView = {
     },
 
     render: function() {
-      if (window.performance) _timer.start = window.performance.now();
-      _updateStateFromStores();
-      this.setCanvasTranslation();
-      for(var key in _notes) {
-        CanvasView.renderNote(_notes[key]);
-      }
-      if (window.performance) _timer.average = (_timer.average * _timer.count + window.performance.now() - _timer.start) / (++_timer.count);
-      console.log("average render duration: ", _timer.average);
+      window.requestAnimationFrame(
+        if (window.performance) _timer.start = window.performance.now();
+        _updateStateFromStores();
+        this.setCanvasTranslation();
+        for(var key in _notes) {
+          CanvasView.renderNote(_notes[key]);
+        }
+        if (window.performance) _timer.average = (_timer.average * _timer.count + window.performance.now() - _timer.start) / (++_timer.count);
+        console.log("average render duration: ", _timer.average);
+      )
     },
 
     setCanvasTranslation: function() {
@@ -134,7 +136,6 @@ var CanvasView = {
       this.ctx.fillStyle = "blue";
       this.ctx.font = Math.round(12 * _transform.scale) + "px Arial";
       for(var i = 0; i < note.data.textArr.length; i++) {
-        // this.ctx.fillText(" " + note.data.textArr[i], left, top + (12 * (i + 2) - 6) );
         this.ctx.fillText(" " + note.data.textArr[i], left, Math.round(top + (12 * (i + 2) - 6) * _transform.scale));
       }
     },
