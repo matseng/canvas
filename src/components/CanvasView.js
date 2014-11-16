@@ -14,6 +14,8 @@ var _transform;
 var _transformPrevious = {translateX: 0, translateY:0, scale: 1};
 var _notes;
 var _note;  // most recently added or updated note
+var _timer = {average: 0, count: 0, start: 0};
+
 
 function _updateStateFromStores() {
   _transform = TransformStore.get();
@@ -98,39 +100,42 @@ var CanvasView = {
     },
 
     render: function() {
+      if (window.performance) _timer.start = window.performance.now();
       _updateStateFromStores();
       this.setCanvasTranslation();
       for(var key in _notes) {
         CanvasView.renderNote(_notes[key]);
       }
+      if (window.performance) _timer.average = (_timer.average * _timer.count + window.performance.now() - _timer.start) / (++_timer.count);
+      console.log("average render duration: ", _timer.average);
     },
 
     setCanvasTranslation: function() {
-      this.ctx.translate(-_transformPrevious.translateX * _transformPrevious.scale, -_transformPrevious.translateY * _transformPrevious.scale);
+      this.ctx.translate(Math.round(-_transformPrevious.translateX * _transformPrevious.scale), Math.round(-_transformPrevious.translateY * _transformPrevious.scale));
       this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
-      this.ctx.translate(_transform.translateX * _transform.scale, _transform.translateY * _transform.scale);
+      this.ctx.translate(Math.round(_transform.translateX * _transform.scale), Math.round(_transform.translateY * _transform.scale));
       _transformPrevious = {translateX: _transform.translateX, translateY: _transform.translateY, scale: _transform.scale};
     },
 
     renderNote: function(note) {
       note = note || _note;
-      var left = note.data.x * _transform.scale;
-      var top = note.data.y * _transform.scale;
+      var left = Math.round(note.data.x * _transform.scale);
+      var top = Math.round(note.data.y * _transform.scale);
       CanvasView.renderShape(note, left, top);
       CanvasView.renderText(note, left, top);
     },
 
     renderShape: function(note, left, top) {
       this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
-      this.ctx.fillRect.apply(this.ctx, [left, top, note.style.width * _transform.scale, note.style.height * _transform.scale]);
+      this.ctx.fillRect.apply(this.ctx, [left, top, Math.round(note.style.width * _transform.scale), Math.round(note.style.height * _transform.scale)]);
     },
 
     renderText: function(note, left, top) {
       this.ctx.fillStyle = "blue";
-      this.ctx.font = 12 * _transform.scale + "px Arial";
+      this.ctx.font = Math.round(12 * _transform.scale) + "px Arial";
       for(var i = 0; i < note.data.textArr.length; i++) {
         // this.ctx.fillText(" " + note.data.textArr[i], left, top + (12 * (i + 2) - 6) );
-        this.ctx.fillText(" " + note.data.textArr[i], left, top + (12 * (i + 2) - 6) * _transform.scale);
+        this.ctx.fillText(" " + note.data.textArr[i], left, Math.round(top + (12 * (i + 2) - 6) * _transform.scale));
       }
     },
 
