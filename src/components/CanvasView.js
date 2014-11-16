@@ -14,6 +14,8 @@ var _transform;
 var _transformPrevious = {translateX: 0, translateY:0, scale: 1};
 var _notes;
 var _note;  // most recently added or updated note
+var _shapes = [];
+var _text = [];
 var _timer = {average: 0, count: 0, start: 0};
 
 
@@ -104,39 +106,78 @@ var CanvasView = {
     render: function() {
       if (window.performance) _timer.start = window.performance.now();
       _updateStateFromStores();
-      this.setCanvasTranslation();
+      _shapes = [];
+      _text = [];
+      
       for(var key in _notes) {
-        CanvasView.renderNote(_notes[key]);
+        var note = _notes[key] || _note;
+        var left = Math.round(note.data.x * _transform.scale);
+        var top = Math.round(note.data.y * _transform.scale);
+        var width = Math.round(note.style.width * _transform.scale);
+        var height = Math.round(note.style.height * _transform.scale);
+        _shapes.push([left, top, width, height]);
+        for(var i = 0; i < note.data.textArr.length; i++) {
+          _text.push({
+            fillStyle:'blue', 
+            font:Math.round(12 * _transform.scale) + "px Arial", 
+            fillText: [" " + note.data.textArr[i], left, Math.round(top + (12 * (i + 2) - 6) * _transform.scale)],
+          });
+        }
       }
+
+      window.requestAnimationFrame(function() {
+        this.setCanvasTranslation();
+        this.renderShapes();
+        this.renderText();
+      }.bind(this));
+      // for(var key in _notes) {
+      //   CanvasView.renderNote(_notes[key]);
+      // }
       if (window.performance) {
         var renderDuration = window.performance.now() - _timer.start;
         console.log(renderDuration);
-       // _timer.average = (_timer.average * _timer.count + renderDuration) / (_timer.count + 1);
-        // _timer.count++;
-        // console.log("Average render duration: ", _timer.average);
+        _timer.average = (_timer.average * _timer.count + renderDuration) / (_timer.count + 1);
+        _timer.count++;
+        console.log("Average render duration: ", _timer.average);
       }
     },
 
     setCanvasTranslation: function() {
-      window.requestAnimationFrame(function(leftResetToOrigin, topResetToOrigin, left, top) {
+      var leftResetToOrigin = Math.round(-_transformPrevious.translateX * _transformPrevious.scale);
+      var topResetToOrigin = Math.round(-_transformPrevious.translateY * _transformPrevious.scale);
+      var left = Math.round(_transform.translateX * _transform.scale);
+      var top = Math.round(_transform.translateY * _transform.scale);
+
+      // window.requestAnimationFrame(function(leftResetToOrigin, topResetToOrigin, left, top) {
         this.ctx.translate(leftResetToOrigin, topResetToOrigin);
         this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
         this.ctx.translate(left, top);
-      }.bind(this, 
-        Math.round(-_transformPrevious.translateX * _transformPrevious.scale),
-        Math.round(-_transformPrevious.translateY * _transformPrevious.scale),
-        Math.round(_transform.translateX * _transform.scale),
-        Math.round(_transform.translateY * _transform.scale)
-      ));
+      // }.bind(this, 
+      // ));
       _transformPrevious = {translateX: _transform.translateX, translateY: _transform.translateY, scale: _transform.scale};
     },
 
+    renderShapes: function() {
+      for(var i = 0; i < _shapes.length; i++) {
+        this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
+        this.ctx.fillRect.apply(this.ctx, _shapes[i]);
+      }
+    },
+
+    renderText: function() {
+      for(var i = 0; i < _text.length; i++) {
+        this.ctx.fillStyle = _text[i].fillStyle;
+        this.ctx.font = _text[i].font;
+        this.ctx.fillText.apply(this.ctx, _text[i].fillText);
+      }
+    },
+
     renderNote: function(note) {
-      note = note || _note;
+      var note = note || _note;
       var left = Math.round(note.data.x * _transform.scale);
       var top = Math.round(note.data.y * _transform.scale);
       CanvasView.renderShape(note, left, top);
-      // CanvasView.renderText(note, left, top);
+      CanvasView.renderText_OLD(note, left, top);
     },
 
     renderShape: function(note, left, top) {
@@ -145,19 +186,20 @@ var CanvasView = {
         // this.ctx.fillRect.bind(this, left, top, Math.round(note.style.width * _transform.scale), Math.round(note.style.height * _transform.scale))
         // CanvasView.ctx.fillRect.bind(CanvasView, left, top, Math.round(note.style.width * _transform.scale), Math.round(note.style.height * _transform.scale))
       // );
-      window.requestAnimationFrame(function(left, top, width, height) {
-        this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
-        this.ctx.fillRect(left, top, width, height);
-      }.bind(this, left, top, Math.round(note.style.width * _transform.scale), Math.round(note.style.height * _transform.scale)));
+      // window.requestAnimationFrame(function(left, top, width, height) {
+        // this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
+        // this.ctx.fillRect(left, top, width, height);
+      // }.bind(this, left, top, width, height));
+      this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
+      this.ctx.fillRect(left, top, Math.round(note.style.width * _transform.scale), Math.round(note.style.height * _transform.scale));
+
     },
 
-    renderText: function(note, left, top) {
+    renderText_OLD: function(note, left, top) {
       this.ctx.fillStyle = "blue";
       this.ctx.font = Math.round(12 * _transform.scale) + "px Arial";
       for(var i = 0; i < note.data.textArr.length; i++) {
-        window.requestAnimationFrame(function(text, left, top) {
-          this.ctx.fillText(text, left, top);
-        }.bind(this, " " + note.data.textArr[i], left, Math.round(top + (12 * (i + 2) - 6) * _transform.scale)));
+        this.ctx.fillText(" " + note.data.textArr[i], left, Math.round(top + (12 * (i + 2) - 6) * _transform.scale));
       }
     },
 
