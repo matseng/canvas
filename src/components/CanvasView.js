@@ -22,6 +22,8 @@ function _updateStateFromStores() {
   _notes = NotesStore.getAll();
 };
 
+function _requestAnimationFrame() {};
+
 var CanvasView = {
     
     canvas: document.getElementById('canvas'),
@@ -100,22 +102,29 @@ var CanvasView = {
     },
 
     render: function() {
-      window.requestAnimationFrame( function() {
-        if (window.performance) _timer.start = window.performance.now();
-        _updateStateFromStores();
-        this.setCanvasTranslation();
-        for(var key in _notes) {
-          CanvasView.renderNote(_notes[key]);
-        }
-        if (window.performance) _timer.average = (_timer.average * _timer.count + window.performance.now() - _timer.start) / (++_timer.count);
-        console.log("Average render duration: ", _timer.average);
-      }.bind(this));
+      if (window.performance) _timer.start = window.performance.now();
+      _updateStateFromStores();
+      this.setCanvasTranslation();
+      for(var key in _notes) {
+        CanvasView.renderNote(_notes[key]);
+      }
+      if (window.performance) {
+        var renderDuration = window.performance.now() - _timer.start;
+        console.log(renderDuration);
+       // _timer.average = (_timer.average * _timer.count + renderDuration) / (_timer.count + 1);
+        // _timer.count++;
+        // console.log("Average render duration: ", _timer.average);
+      }
     },
 
     setCanvasTranslation: function() {
-      this.ctx.translate(Math.round(-_transformPrevious.translateX * _transformPrevious.scale), Math.round(-_transformPrevious.translateY * _transformPrevious.scale));
-      this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
-      this.ctx.translate(Math.round(_transform.translateX * _transform.scale), Math.round(_transform.translateY * _transform.scale));
+      window.requestAnimationFrame(function(leftPrevious, topPrevious, left, top) {
+        this.ctx.translate(Math.round(-_transformPrevious.translateX * _transformPrevious.scale), Math.round(-_transformPrevious.translateY * _transformPrevious.scale));
+        this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
+        this.ctx.translate(Math.round(_transform.translateX * _transform.scale), Math.round(_transform.translateY * _transform.scale));
+      }.bind(this, 
+        
+      ));
       _transformPrevious = {translateX: _transform.translateX, translateY: _transform.translateY, scale: _transform.scale};
     },
 
@@ -124,19 +133,24 @@ var CanvasView = {
       var left = Math.round(note.data.x * _transform.scale);
       var top = Math.round(note.data.y * _transform.scale);
       CanvasView.renderShape(note, left, top);
-      CanvasView.renderText(note, left, top);
+      // CanvasView.renderText(note, left, top);
     },
 
     renderShape: function(note, left, top) {
+      // TODO: wrap window.requestAnimationFrame just around canvas rending methods
       this.ctx.fillStyle = 'rgba(200,0,0,0.5)';
-      this.ctx.fillRect.apply(this.ctx, [left, top, Math.round(note.style.width * _transform.scale), Math.round(note.style.height * _transform.scale)]);
+      window.requestAnimationFrame(function() {
+        this.ctx.fillRect.apply(this.ctx, [left, top, Math.round(note.style.width * _transform.scale), Math.round(note.style.height * _transform.scale)]);
+      }.bind(this));
     },
 
     renderText: function(note, left, top) {
       this.ctx.fillStyle = "blue";
       this.ctx.font = Math.round(12 * _transform.scale) + "px Arial";
       for(var i = 0; i < note.data.textArr.length; i++) {
-        this.ctx.fillText(" " + note.data.textArr[i], left, Math.round(top + (12 * (i + 2) - 6) * _transform.scale));
+        window.requestAnimationFrame(function() {
+          this.ctx.fillText(" " + note.data.textArr[i], left, Math.round(top + (12 * (i + 2) - 6) * _transform.scale));
+        }.bind(this));
       }
     },
 
