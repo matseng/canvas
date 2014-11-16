@@ -100,7 +100,7 @@ var CanvasView = {
     },
 
     render: function() {
-      window.requestAnimationFrame(
+      window.requestAnimationFrame( function() {
         if (window.performance) _timer.start = window.performance.now();
         _updateStateFromStores();
         this.setCanvasTranslation();
@@ -109,7 +109,7 @@ var CanvasView = {
         }
         if (window.performance) _timer.average = (_timer.average * _timer.count + window.performance.now() - _timer.start) / (++_timer.count);
         console.log("average render duration: ", _timer.average);
-      )
+      });
     },
 
     setCanvasTranslation: function() {
